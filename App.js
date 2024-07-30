@@ -1,13 +1,18 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { SQLiteProvider } from 'expo-sqlite';
+import { initializeDatabase } from './inicializeTestDataBase';
+import HomeScreen from './src/navigation/HomeScreen';
 
 export default function App() {
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    <SQLiteProvider
+      databaseName='store.db' 
+      onInit={initializeDatabase}
+    >
+      <HomeScreen />
+    </SQLiteProvider >
+  )
 }
 
 const styles = StyleSheet.create({
@@ -15,6 +20,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    padding: 20,
+  },
+  imageContainer: {
+    flex: 1,
+    paddingTop: 58,
+  },
+  footerContainer: {
+    flex: 1 / 3,
+    alignItems: 'center',
+  },
+  optionsContainer: {
+    position: 'absolute',
+    bottom: 80,
+  },
+  optionsRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
   },
 });
+
+
