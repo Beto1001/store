@@ -1,33 +1,76 @@
 import React from 'react';
 import {
-    Text, StyleSheet,
-    TouchableOpacity, View, ScrollView, Alert, Image, Vibration
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+    Image,
+    Vibration
 } from 'react-native';
+import { Skeleton } from 'react-native-skeletons';
 import ShoppingCart from '../../../shoppingcart/application/components/ShoppingCart';
-const ProductCard = ({ product , getProductsWithUseCallback}) => {
+import DeleteProduct from './DeleteProduct';
+import EditProductIcon from './EditProductIcon';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+export default function ProductCard ({ product, getProductsWithUseCallback, screen }) {
     return (
-        <View >
-            <TouchableOpacity style={styles.card} onPress={() => Vibration.vibrate()}>
-                <View style={styles.imageContainer}>
-                    <Image source={{ uri: product.image_url }} style={styles.image} />
-                </View>
-                <View style={styles.atributesContainer}>
-                    {/* <Text style={styles.price}>Categoría: {product.category}</Text> */}
+        <View>
+            {
+                screen === "Products" ? (
+                    <TouchableOpacity style={styles.card} onPress={() => Vibration.vibrate()}>
+                        <View style={styles.imageContainer}>
+                            <Image source={{ uri: product.image_url }} style={styles.image} />
+                        </View>
+                        <View style={styles.atributesContainer}>
+                            <View>
+                                <Text style={styles.name}>{product.name}</Text>
 
-                    <View>
-                        <Text style={styles.name}>{product.name}</Text>
+                                <Text style={styles.multiLineText}>{product.description}</Text>
 
-                        <Text style={styles.multiLineText}>{product.description}</Text>
+                                <Text style={styles.price}>$ {product.price}</Text>
+                                <Text style={styles.price}>Existentes: {product.quantity}</Text>
+                            </View>
+                            <ShoppingCart 
+                                product={product} 
+                                getProductsWithUseCallback={getProductsWithUseCallback} />
+                        </View>
+                    </TouchableOpacity >
+                ) : (
+                    <TouchableOpacity style={styles.cardEdit} onPress={() => Vibration.vibrate()}>
+                        <View style={styles.imageContainer}>
+                            <Image source={{ uri: product.image_url }} style={styles.image} />
+                        </View>
+                        <View style={styles.atributesContainerEdit}>
+                            <View>
+                                <Text style={styles.nameEdit}>{product.name}</Text>
 
-                        <Text style={styles.price}>$ {product.price}</Text>
-                        <Text style={styles.price}>Existentes: {product.quantity}</Text>
-                    </View>
-
-                    <ShoppingCart product={product} getProductsWithUseCallback={getProductsWithUseCallback} />
-
-                </View>
-            </TouchableOpacity>
-        </View>
+                                <View style={styles.barcodeContainerEdit}>
+                                    <MaterialCommunityIcons
+                                        name="barcode"
+                                        size={40}
+                                        color="black"
+                                    />
+                                    <Text style={styles.multiLineText}>{product.barcode}</Text>
+                                </View>
+                                <Text style={styles.price}>$ {product.price}</Text>
+                                <Text style={styles.price}>Existentes: {product.quantity}</Text>
+                            </View>
+                            <View style={styles.optionscontainer}>
+                                <DeleteProduct 
+                                    product={product} 
+                                    getProductsWithUseCallback={getProductsWithUseCallback} 
+                                />
+                                <EditProductIcon 
+                                    product={product} 
+                                    getProductsWithUseCallback={getProductsWithUseCallback} 
+                                />
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                )
+            }
+        </View >
     );
 };
 
@@ -53,25 +96,7 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: 5,
     },
-    description: {
-        flex: 1,
-        flexWrap: 'wrap'
-    },
-    descriptionContainer: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: 160,
-    },
-    priceContainer: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-
-    },
-
     price: {
         fontWeight: 'bold',
         fontSize: 16,
@@ -103,6 +128,47 @@ const styles = StyleSheet.create({
     multiLineText: {
         flexWrap: 'wrap',
     },
+    optionscontainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'colum',
+        gap: 10,
+    },
+    cardEdit:{
+        backgroundColor: '#fff',
+        padding: 10,
+        margin: 10,
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        height: 220,
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 20,
+    },
+    atributesContainerEdit: {
+        width: 160,
+        height: 120,
+        gap: 5,
+    },
+    nameEdit: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color:"#09165A",
+    },
+    barcodeContainerEdit:{
+        display:'flex',
+        justifyContent:'center',
+        alignItems:'center',
+        flexDirection:'row',
+        gap:5,
+        marginRight:20
+    },
 });
-
-export default ProductCard;

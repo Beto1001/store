@@ -7,6 +7,15 @@ import { Skeleton } from 'react-native-skeletons';
 export default function ProductsScreen({ navigation }) {
 
     let focusListener = null;
+    let screen = '';
+    const test = navigation.getState().routeNames;
+
+    for (let i = 0; i < test.length; i++) {
+        if (test[i] === "Products") {
+            screen = test[i];
+            break;
+        }
+    }
 
     const [products, setProducts] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
@@ -14,9 +23,10 @@ export default function ProductsScreen({ navigation }) {
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         console.log('16', refreshing);
+        getProductsWithUseCallback();
         setTimeout(() => {
             setRefreshing(false);
-            console.log('19', refreshing);
+            console.log('20', refreshing);
         }, 2000);
     }, []);
     /**
@@ -62,14 +72,19 @@ export default function ProductsScreen({ navigation }) {
                 </View>
             ) : (
                 <ScrollView style={styles.scrollView}>
-                    <ScrollView horizontal={false} >
-                       
-                        {products.map((product) => (
-                            <ProductCard key={product.id} product={product} getProductsWithUseCallback={getProductsWithUseCallback} />
-                        ))}
 
+                    <ScrollView horizontal={false} >
+                        {products.map((product) => (
+                            <ProductCard
+                                key={product.id}
+                                product={product}
+                                getProductsWithUseCallback={getProductsWithUseCallback}
+                                screen={screen}
+                            />
+                        ))}
                     </ScrollView >
                 </ScrollView>
+
             )}
         </ScrollView>
     );

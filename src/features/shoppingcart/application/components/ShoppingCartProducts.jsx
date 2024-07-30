@@ -14,7 +14,7 @@ export default function ShoppingCartProducts({ items }) {
     const totalPagar = parseFloat(product.price) * cantidad;
 
     return (
-        <TouchableOpacity style={styles.container} onPress={() => Vibration.vibrate}>
+        <TouchableOpacity style={styles.container} onPress={() => Vibration.vibrate()}>
             <Text style={styles.elementtext}>{product.name}</Text>
             <Image source={{ uri: product.image_url }} style={styles.imageContainer} />
 

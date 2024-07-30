@@ -2,7 +2,7 @@ import * as SQLite from 'expo-sqlite'
 
 /**
  * Funcion que recupera todos los registros de productos
- * @returns Object[]
+ * @returns Arreglo con todos los productos registrados: Object[]
  */
 export const getProductsTest = async () => {
     const db = await SQLite.openDatabaseAsync('store.db');
@@ -21,13 +21,13 @@ export const getProductsTest = async () => {
 
 /**
  * Función que registra un nuevo producto
- * @param {string} name string
- * @param {string} barcode string 
- * @param {string} description string
- * @param {number} quantity number 
- * @param {number} price number
- * @param {string} image_url string
- * @param {string} category string
+ * @param {string} name nombre del producto: string
+ * @param {string} barcode codigo de barras del producto: string 
+ * @param {string} description descripcion del producto: string
+ * @param {number} quantity cantidad de productos: number 
+ * @param {number} price precio del producto: number
+ * @param {string} image_url URL de la imagen del producto: string
+ * @param {string} category categoria del producto: string
  */
 export const addNewProduct = async (
     name,
@@ -60,31 +60,64 @@ export const addNewProduct = async (
 
 /**
  * Funcion para actualizar información de un producto
- * @param {number} productId number
- * @param {string} name string
- * @param {string} description string 
- * @param {number} quantity number
- * @param {number} price number
- * @param {string} image_url string
- * @param {string} category string
+ * @param {number} productId ID del producto: number
+ * @param {string} name nuevo nombre del producto: string
+ * @param {string} description nueva descripcion del producto: string 
+ * @param {number} quantity nueva cantidad de productos: number
+ * @param {number} price nuevo precio del producto: number
+ * @param {string} image_url nueva URL de la imagen del producto: string
+ * @param {string} category nueva categoria del producto: string
  */
 export const editProduct = async (
-    productId,  
+    productId,
     name,
     description,
     quantity,
     price,
     image_url,
     category) => {
-        
+
     const db = await SQLite.openDatabaseAsync('store.db');
-    await db.runAsync('UPDATE products SET name = ? ,description = ? ,quantity = ? ,price = ? ,image_url = ? ,category = ? WHERE id = ?', [name, description, parseInt(quantity), parseFloat(price), image_url, category, productId]);
-   
+
+    await db.runAsync('UPDATE products SET name = ? , description = ? ,quantity = ? ,price = ? ,category = ?,image_url = ? WHERE id = ?', [name, description, parseInt(quantity), parseFloat(price),category, image_url, productId]);
+    return new Promise((resolve, reject) => {
+        resolve('Producto actualizado con exito');
+    })
+}
+
+/**
+ * 
+ * @param {number} productId ID del producto a borrar: number 
+ * @returns mensaje de respuesta exitosa: string
+ */
+export const deleteProduct = async (productId) => {
+    const db = await SQLite.openDatabaseAsync('store.db');
+
+    await db.runAsync('DELETE FROM products WHERE id = $id', { $id: productId });
+
+    return new Promise((resolve, reject) => {
+        resolve('Producto eliminado con exito');
+    })
+}
+
+/**
+ * Funcion que busca a un producto por su codigo de barras
+ * @param {string} barcode codigo de barras del producto a buscar: string 
+ * @returns Arreglo con toda la información del producto: Object[]
+ */
+export const getProductByBarcode = async (barcode) => {
+    const db = await SQLite.openDatabaseAsync('store.db');
+
+    const product = await db.getAllAsync('SELECT * FROM products WHERE barcode = $barcode', { $barcode: barcode });
+
+    return new Promise((resolve, reject) => {
+        resolve(product);
+    })
 }
 
 /**
  * Función que devuelve todas las categorias registradas de los productos
- * @returns Object[]
+ * @returns Arreglo con todas las categorias registradas: Object[]
  */
 export const getCategories = async () => {
     const db = await SQLite.openDatabaseAsync('store.db');
@@ -100,5 +133,5 @@ export const getCategories = async () => {
     return new Promise((resolve, reject) => {
         resolve(arregloPrueba);
     })
-   
+
 }

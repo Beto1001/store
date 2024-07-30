@@ -1,15 +1,17 @@
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import ProductsScreen from '../features/products/application/screens/ProductsScreen';
-import ShoppingCartScreen from '../features/shoppingcart/application/screens/ShoppingCartScreen';
+
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-
-import ProductBarCodeScanner from '../features/products/application/components/ProductReadCodeScanner';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
 import EditProductScreen from '../features/products/application/screens/EditProductScreen';
+import ProductsScreen from '../features/products/application/screens/ProductsScreen';
+import ShoppingCartScreen from '../features/shoppingcart/application/screens/ShoppingCartScreen';
+import RegisterProductScreen from '../features/products/application/screens/RegisterProductScreen';
+
 const Tab = createBottomTabNavigator();
 
 export default function HomeScreen() {
@@ -51,7 +53,7 @@ export default function HomeScreen() {
                 })}
             >
                 <Tab.Screen name="Products" component={ProductsScreen} />
-                <Tab.Screen name="ProductScanner" component={ProductBarCodeScanner} />
+                <Tab.Screen name="ProductScanner" component={RegisterProductScreen} />
                 <Tab.Screen name="EditScreen" component={EditProductScreen} />
                 <Tab.Screen name="ShoppingCart" component={ShoppingCartScreen} />
 

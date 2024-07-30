@@ -1,23 +1,35 @@
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView } from 'react-native'
 import React, { useState, useEffect, useCallback } from 'react';
-import EditProductCard from '../components/EditProductCard';
-import { FontAwesome } from '@expo/vector-icons';
 import { getProductsTest } from '../../datasource/productDataSource';
+import ProductCard from '../components/ProductCard';
+import FindProductButton from '../components/FindProductButton';
+
 export default function EditProductScreen({navigation}) {
-    const [products, setProducts] = useState([]);
 
     let focusListener = null;
-    console.log(navigation);
+    const [products, setProducts] = useState([]);
+
+    let screen = '';
+    const test = navigation.getState().routeNames;
+
+    for (let i = 0; i < test.length; i++) {
+        if (test[i] === "EditScreen") {
+            screen = test[i];
+            break;
+        }
+    }
 
     const getAllProducts = ()=>{
         getProductsTest()
         .then(response => setProducts(response))
         .catch(error => console.log(error))
+    }
 
+    const changeScreen = ()=>{
+        navigation.navigate('ProductScanner');
     }
 
     const getProductsWithUseCallback = useCallback(()=>{
-        console.log('17');
         getAllProducts();
  
      },[products]);
@@ -25,7 +37,6 @@ export default function EditProductScreen({navigation}) {
     useEffect(() => {
         getProductsWithUseCallback();
         focusListener = navigation.addListener('focus', () => {
-            console.log('28 Actualizando cambios');
             getProductsWithUseCallback();
         });
       
@@ -37,45 +48,40 @@ export default function EditProductScreen({navigation}) {
                 <View style={styles.searchcontainer}>
                     <TextInput
                         style={styles.input}
-                        placeholder='Nombre del producto'
+                        placeholder='Codigo de barras del producto'
                     />
-
-                    <TouchableOpacity style={styles.buttonRegister}>
+                    {/* <TouchableOpacity style={styles.buttonRegister}>
                         <Text style={styles.searchtext}>Buscar</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
 
-                    <TouchableOpacity style={styles.buttonscanner}>
-                        <Text style={styles.searchtext}>Escanear</Text>
-                    </TouchableOpacity>
+                    <FindProductButton/>
 
                 </View>
-
             </View>
             <ScrollView>
                 {products.length === 0 ? (
                     <View>
                         <Text>No hay productos registrados</Text>
-                        <TouchableOpacity onPress={getAllProducts}>
-                            <Text>Cargar</Text>
+                        <TouchableOpacity onPress={changeScreen}>
+                            <Text>Aun no hay productos registrados, ve a registrar</Text>
                         </TouchableOpacity>
-
                     </View>
                 ) : (
                     <ScrollView>
-
                         <ScrollView horizontal={false} >
-
                             {products.map((product) => (
-                                <EditProductCard key={product.id} product={product} getProductsWithUseCallback={getProductsWithUseCallback}/>
+                                <ProductCard 
+                                    key={product.id} 
+                                    product={product} 
+                                    getProductsWithUseCallback={getProductsWithUseCallback}
+                                    screen={screen}
+                                />
                             ))}
-
                         </ScrollView >
                     </ScrollView>
                 )}
             </ScrollView>
-
         </ScrollView>
-
     )
 }
 
@@ -125,8 +131,5 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         width: 60,
     },
-    searchtext: {
-        color: 'white',
-        fontSize: 14,
-    },
+   
 })

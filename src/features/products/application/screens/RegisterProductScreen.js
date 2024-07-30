@@ -11,12 +11,11 @@ import {
 } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { pickImage, saveImageToDirectory, takePhoto } from "../../../../service/galleryService";
+import { pickImage,saveImageToDirectory,takePhoto } from "../../../../service/galleryService";
 import { SelectList } from 'react-native-dropdown-select-list'
-import { addNewProduct, getCategories } from "../../datasource/productDataSource";
+import { addNewProduct,getCategories } from "../../datasource/productDataSource";
 
-export default function ProductBarCodeScanner() {
-
+export default function RegisterProductScreen() {
     //Camera propierties
     const [permission, requestPermission] = useCameraPermissions();
     const [scanned, setScanned] = useState(false);

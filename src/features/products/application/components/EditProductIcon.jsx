@@ -11,9 +11,9 @@ import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useSQLiteContext } from 'expo-sqlite';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { pickImage, saveImageToDirectory, takePhoto } from '../../../../service/galleryService';
-import { editProduct, getProductsTest } from '../../datasource/productDataSource';
+import { editProduct, getProductsTest,getCategories } from '../../datasource/productDataSource';
 
-export default function EditProductIcon({ product,getProductsWithUseCallback }) {
+export default function EditProductIcon({ product, getProductsWithUseCallback }) {
     const db = useSQLiteContext();
 
     //Modal
@@ -30,23 +30,14 @@ export default function EditProductIcon({ product,getProductsWithUseCallback }) 
     const [productCategory, setProductCategory] = useState(`${product.category}`);
 
     const [category, setCategory] = useState([]);
-    const handleEdit = async () => {
-        console.log('7', { product });
+    const handleEdit = () => {
         setModalVisible(true);
-        console.log({ productCategory });
-        // getProductsTest();
     };
-    const getCategories = async () => {
-        try {
-            const allCategories = await db.getAllAsync(`SELECT * FROM categories`);
 
-            setCategory(allCategories);
-            console.log('99', category);
-
-        } catch (error) {
-            console.log(error);
-        }
-
+    const getAllCategories = () => {
+        getCategories()
+        .then(response=>setCategory(response))
+        .catch(error=>console.log(error))
     }
     const handleSelectImage = async () => {
         const result = await pickImage();
@@ -75,9 +66,9 @@ export default function EditProductIcon({ product,getProductsWithUseCallback }) 
     };
 
     const handleEditProduct = async () => {
-        console.log('93', { product });
         try {
             const imagePath = productImage ? await saveImageToDirectory(productImage[0].uri) : product.image_url;
+            console.log('71',productCategory);
             editProduct(
                 product.id,
                 productName,
@@ -86,8 +77,9 @@ export default function EditProductIcon({ product,getProductsWithUseCallback }) 
                 productPrice,
                 imagePath,
                 productCategory
-            );
-            console.log('Producto Actualizado con éxito');
+            )   .then((response) => console.log('89', response))
+                .catch((error) => console.log(error))
+            
             getProductsWithUseCallback();
 
             alert("Producto actualizado");
@@ -100,11 +92,10 @@ export default function EditProductIcon({ product,getProductsWithUseCallback }) 
     };
 
     useEffect(() => {
-        getCategories();
+        getAllCategories();
     }, [])
     return (
         <View>
-
             <TouchableOpacity style={styles.box}>
                 <TouchableOpacity onPress={handleEdit}>
                     <View style={styles.button}>

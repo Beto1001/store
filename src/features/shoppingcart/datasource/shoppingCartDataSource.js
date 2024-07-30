@@ -1,10 +1,18 @@
 import * as SQLite from 'expo-sqlite'
 
 
-export const showDatabase = async () => {
+export const getShoppingCart = async () => {
     const db = await SQLite.openDatabaseAsync('store.db');
 
    
-    const result = await db.getAllAsync('SELECT * FROM products');
-    console.log('7', result);
+    const allRows = await db.getAllAsync('SELECT * FROM carrito');
+    const arregloPrueba = [];
+
+    for (const row of allRows) {
+        arregloPrueba.push(row);
+    }
+
+    return new Promise((resolve, reject) => {
+        resolve(arregloPrueba);
+    })
 }
