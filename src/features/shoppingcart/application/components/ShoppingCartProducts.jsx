@@ -1,31 +1,24 @@
-import {Text, StyleSheet, TouchableOpacity, Vibration, Image } from 'react-native';
+import { Text, StyleSheet, TouchableOpacity, Vibration, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { showDatabase } from '../../datasource/shoppingCartDataSource';
-export default function ShoppingCartProducts({ items }) {
+export default function ShoppingCartProducts({ products, carrito }) {
 
-    const product = items[0];
-    const cantidad = items[1].cantidad;
-    const carritoId = items[1].id;
-
-    const handleDelete = ()=>{
-        console.log(carritoId);
-        
-    }
-    const totalPagar = parseFloat(product.price) * cantidad;
+    
+    console.log('6 arreglo de productos en ShoppingCartProducts', products);
+    console.log('7', carrito);
 
     return (
         <TouchableOpacity style={styles.container} onPress={() => Vibration.vibrate()}>
-            <Text style={styles.elementtext}>{product.name}</Text>
-            <Image source={{ uri: product.image_url }} style={styles.imageContainer} />
+            {/* <Text style={styles.elementtext}>{productsTestExample.name}</Text>
+            <Image source={{ uri: productsTestExample.image_url }} style={styles.imageContainer} />
 
-            <Text>Precio unitario: $ {product.price}</Text>
+            <Text>Precio unitario: $ {productsTestExample.price}</Text>
             <Text>Cantidad: {cantidad}</Text>
             <Text>Total a pagar producto individual $ {totalPagar}</Text>
 
             <TouchableOpacity style={styles.carritodelete} onPress={handleDelete}>
                 <Text>Borrar</Text>
-            </TouchableOpacity>
-           
+            </TouchableOpacity> */}
+
         </TouchableOpacity>
     )
 }
@@ -53,14 +46,14 @@ const styles = StyleSheet.create({
         color: "#071C54",
 
     },
-    carritodelete:{
-        display:'flex',
-        justifyContent:'center',
-        alignItems:'center',
-        width:100,
-        height:30,
-        borderWidth:1,
-        borderColor:'blue'
+    carritodelete: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 100,
+        height: 30,
+        borderWidth: 1,
+        borderColor: 'blue'
 
     }
 });

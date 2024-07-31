@@ -1,8 +1,9 @@
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Vibration, ScrollView } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { Suspense, useCallback, useEffect, useState } from 'react'
 import { useSQLiteContext } from 'expo-sqlite';
 import ShoppingCartProducts from '../components/ShoppingCartProducts';
 import { getShoppingCart } from '../../datasource/shoppingCartDataSource';
+import { getProductById } from '../../../products/datasource/productDataSource';
 export default function ShoppingCartScreen({ navigation }) {
 
     let focusListener = null;
@@ -11,43 +12,49 @@ export default function ShoppingCartScreen({ navigation }) {
     const [shoppingCart, setShoppingCart] = useState([]);
     let totalPagar = 0;
     let contador = 0;
-    const saveShoppingCart = () => {
-        Vibration.vibrate();
-        getShoppingCartUseCallback();
-    }
+    const arregloDeProductos = [];
 
     const getAllShoppingCarts = () => {
         getShoppingCart()
-            .then(response => setShoppingCart(response))
-            .catch(error => console.log(error))
+            .then((response) => {
+                if (response.length > 0) {
+                    setShoppingCart(response);
 
+                    shoppingCart.map((carrito, index) => {
+                        getProductById(carrito.id_producto)
+                            .then((response) => {
+                                arregloDeProductos.push(response[0]);
+                                console.log('28 Arreglo de productos', arregloDeProductos);
+                            })
+                            .catch((error) => console.log(error))
+                    });
+                }
+            })
+            .catch(error => console.log(error))
     }
+
     const getShoppingCartUseCallback = useCallback(() => {
         getAllShoppingCarts();
     }, [shoppingCart]);
 
-    useEffect(() => {
-        getShoppingCartUseCallback();
-        focusListener = navigation.addListener('focus', () => {
-            console.log('31 Actualizando cambios');
-            getShoppingCartUseCallback();
-        });
-
-    }, []);
-
-    const getProductsCart = async (carrito) => {
-        const product = await db.getAllAsync('SELECT * FROM products WHERE id = $id', { $id: carrito.id_producto });
-        totalPagar += parseFloat(carrito.cantidad) * parseFloat(product[0].price);
-        contador = contador + 1;
+    const callRenderShoppingCartCards = (carrito, index, arregloDeProductos) => {
+        console.log('41 arreglo de productos en cartScreen', arregloDeProductos);
         return (
-            <View>
-                <ShoppingCartProducts key={carrito.id} items={[product[0], carrito]} />
-                {shoppingCart.length === contador && <Text style={styles.payment}>Total a pagar ${totalPagar}</Text>}
+            <View key={index}>
+                <ShoppingCartProducts
+                    key={carrito.id}
+                    products={arregloDeProductos}
+                    carrito={carrito}
+                />
+                <Text>{carrito.id}</Text>
             </View>
         )
     }
+
     useEffect(() => {
-        getShoppingCartUseCallback();
+
+        getAllShoppingCarts();
+
     }, []);
 
     return (
@@ -56,12 +63,11 @@ export default function ShoppingCartScreen({ navigation }) {
                 {shoppingCart.length === 0 ? (
                     <View>
                         <Text>No hay productos registrados </Text>
-                        
                     </View>
                 ) : (
                     <View>
-                        {shoppingCart.map((carrito) => (
-                            getProductsCart(carrito)
+                        {shoppingCart.map((carrito, index) => (
+                            callRenderShoppingCartCards(carrito, index, arregloDeProductos)
                         ))}
                     </View>
                 )}

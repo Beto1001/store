@@ -33,6 +33,7 @@ export async function initializeDatabase(db) {
         `);
         console.log("Database correct");
 
+        
     } catch (error) {
         console.log(error);
 

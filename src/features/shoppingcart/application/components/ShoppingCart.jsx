@@ -15,6 +15,8 @@ export default function ShoppingCart({ product, getProductsWithUseCallback }) {
     const [modalVisible, setModalVisible] = useState(false);
     const [quantity, setQuantity] = useState('');
 
+    console.log(product,'18');
+
     const handleTouch = () => {
         setModalVisible(true);
     };
