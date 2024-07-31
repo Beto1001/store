@@ -4,7 +4,7 @@ import { getProductsTest } from '../../datasource/productDataSource';
 import ProductCard from '../components/ProductCard';
 import FindProductButton from '../components/FindProductButton';
 
-export default function EditProductScreen({navigation}) {
+export default function EditProductScreen({ navigation }) {
 
     let focusListener = null;
     const [products, setProducts] = useState([]);
@@ -19,24 +19,27 @@ export default function EditProductScreen({navigation}) {
         }
     }
 
-    const getAllProducts = ()=>{
+    const getAllProducts = () => {
         getProductsTest()
-        .then(response => setProducts(response))
-        .catch(error => console.log(error))
+            .then(response => setProducts(response))
+            .catch(error => console.log(error))
     }
 
-    const changeScreen = ()=>{
+    const changeScreen = () => {
         navigation.navigate('ProductScanner');
     }
 
-    const getProductsWithUseCallback = useCallback(()=>{
+    const getProductsWithUseCallback = useCallback(() => {
         getAllProducts();
- 
-    },[products]);
+
+    }, [products]);
 
     useEffect(() => {
+        focusListener = navigation.addListener('focus', () => {
+            getProductsWithUseCallback();
+        });
       
-    }, [getProductsWithUseCallback]);
+    }, []);
 
     return (
         <ScrollView>
@@ -50,7 +53,7 @@ export default function EditProductScreen({navigation}) {
                         <Text style={styles.searchtext}>Buscar</Text>
                     </TouchableOpacity> */}
 
-                    <FindProductButton/>
+                    <FindProductButton />
 
                 </View>
             </View>
@@ -66,9 +69,9 @@ export default function EditProductScreen({navigation}) {
                     <ScrollView>
                         <ScrollView horizontal={false} >
                             {products.map((product) => (
-                                <ProductCard 
-                                    key={product.id} 
-                                    product={product} 
+                                <ProductCard
+                                    key={product.id}
+                                    product={product}
                                     getProductsWithUseCallback={getProductsWithUseCallback}
                                     screen={screen}
                                 />
@@ -127,5 +130,5 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         width: 60,
     },
-   
+
 })

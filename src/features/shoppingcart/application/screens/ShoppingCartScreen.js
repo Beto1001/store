@@ -1,12 +1,19 @@
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Vibration, ScrollView } from 'react-native'
+import {
+    View,
+    Text,
+    StyleSheet,
+    ScrollView,
+    ActivityIndicator
+} from 'react-native'
 import React, { Suspense, useCallback, useEffect, useState } from 'react'
-import { useSQLiteContext } from 'expo-sqlite';
 import ShoppingCartProducts from '../components/ShoppingCartProducts';
 import { getShoppingCart } from '../../datasource/shoppingCartDataSource';
 import { getProductById } from '../../../products/datasource/productDataSource';
+import { useSQLiteContext } from 'expo-sqlite';
 
-export default function ShoppingCartScreen({navigation}) {
+export default function ShoppingCartScreen({ navigation }) {
 
+    const db = useSQLiteContext();
     let focusListener = null;
 
     const [shoppingCart, setShoppingCart] = useState([]);
@@ -19,7 +26,6 @@ export default function ShoppingCartScreen({navigation}) {
     const getAllShoppingCarts = async () => {
         const arrayShoppingCart = await getShoppingCart();
         setShoppingCart(arrayShoppingCart);
-
     }
 
     /**
@@ -47,18 +53,21 @@ export default function ShoppingCartScreen({navigation}) {
                     key={carrito.id}
                     products={product[0]}
                     carrito={carrito}
+                    getShoppingCartUseCallback={getShoppingCartUseCallback}
                 />
                 {shoppingCart.length === contador &&
-                    <Text>Total a pagar: $ {totalPagar}</Text>
+                    <Text style={styles.payment}>Total a pagar: $ {totalPagar}</Text>
                 }
             </View>
         )
     }
 
     useEffect(() => {
-
+        focusListener = navigation.addListener('focus', () => {
+            getShoppingCartUseCallback();
+        });
       
-    }, [getShoppingCartUseCallback]);
+    }, []);
 
     return (
         <ScrollView>
@@ -69,7 +78,7 @@ export default function ShoppingCartScreen({navigation}) {
                     </View>
                 ) : (
                     <View>
-                        <Suspense>
+                        <Suspense fallback={<Loading/>}>
                             {shoppingCart.map((carrito, index) => (
                                 callRenderShoppingCartCards(carrito, index)
                             ))}
@@ -81,10 +90,18 @@ export default function ShoppingCartScreen({navigation}) {
     );
 }
 
+function Loading() {
+    return (
+        <View style={styles.loadingspinner}>
+            <Text>Cargando</Text>
+            <ActivityIndicator size="large" />
+
+        </View>)
+
+}
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
         alignItems: 'center',
     },
     productsContainer: {
@@ -97,6 +114,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: "#071C54",
     },
+    loadingspinner:{
+        display:'flex',
+        justifyContent:'center',
+        alignItems:'center',
+    }
 
 });
 

@@ -15,7 +15,6 @@ export default function ProductsScreen({ navigation }) {
             break;
         }
     }
-
     const [products, setProducts] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
 
@@ -42,8 +41,11 @@ export default function ProductsScreen({ navigation }) {
     }, [products]);
 
     useEffect(() => {
+        focusListener = navigation.addListener('focus', () => {
+            getProductsWithUseCallback();
+        });
        
-    }, [getProductsWithUseCallback]);
+    }, []);
 
     return (
         <ScrollView

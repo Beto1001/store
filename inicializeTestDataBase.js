@@ -32,7 +32,6 @@ export async function initializeDatabase(db) {
             value TEXT NOT NULL);
         `);
         console.log("Database correct");
-
         
     } catch (error) {
         console.log(error);

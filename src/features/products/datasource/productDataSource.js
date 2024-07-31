@@ -4,7 +4,7 @@ import * as SQLite from 'expo-sqlite'
  * Funcion que recupera todos los productos registrados
  * @returns Arreglo con todos los productos registrados: Object[]
  */
-export const getProductsTest = async () => {
+const getProductsTest = async () => {
     const db = await SQLite.openDatabaseAsync('store.db');
 
     const allRows = await db.getAllAsync('SELECT * FROM products ORDER BY name');
@@ -29,7 +29,7 @@ export const getProductsTest = async () => {
  * @param {string} image_url URL de la imagen del producto: string
  * @param {string} category categoria del producto: string
  */
-export const addNewProduct = async (
+const addNewProduct = async (
     name,
     barcode,
     description,
@@ -68,7 +68,7 @@ export const addNewProduct = async (
  * @param {string} image_url nueva URL de la imagen del producto: string
  * @param {string} category nueva categoria del producto: string
  */
-export const editProduct = async (
+const editProduct = async (
     productId,
     name,
     description,
@@ -86,11 +86,27 @@ export const editProduct = async (
 }
 
 /**
+ * Función que modifica la cantidad del producto
+ * @param {number} productId ID del producto al cual se le cambiará la cantidad: number
+ * @param {number} quantity nueva cantidad a guardar: number
+ * @returns mensaje de actualización exitosa: string
+ */
+const editProductInShoppingCart = async (productId, quantity) => {
+    const db = await SQLite.openDatabaseAsync('store.db');
+    await db.runAsync('UPDATE products SET quantity = ? WHERE id = ?', [quantity, productId]);
+
+    return new Promise((resolve, reject) => {
+        resolve('Cantidad del producto actualizada con exito');
+    })
+
+}
+
+/**
  * 
  * @param {number} productId ID del producto a borrar: number 
  * @returns mensaje de respuesta exitosa: string
  */
-export const deleteProduct = async (productId) => {
+const deleteProduct = async (productId) => {
     const db = await SQLite.openDatabaseAsync('store.db');
 
     await db.runAsync('DELETE FROM products WHERE id = $id', { $id: productId });
@@ -105,7 +121,7 @@ export const deleteProduct = async (productId) => {
  * @param {number} productId ID del producto que se desea buscar: number 
  * @returns Arreglo con la información del producto a buscar: Object[]
  */
-export const getProductById = async (productId) => {
+const getProductById = async (productId) => {
     const db = await SQLite.openDatabaseAsync('store.db');
 
     const product = await db.getAllAsync('SELECT * FROM products WHERE id = $id', { $id: parseInt(productId) });
@@ -119,7 +135,7 @@ export const getProductById = async (productId) => {
  * @param {string} barcode codigo de barras del producto a buscar: string 
  * @returns Arreglo con toda la información del producto: Object[]
  */
-export const getProductByBarcode = async (barcode) => {
+const getProductByBarcode = async (barcode) => {
     const db = await SQLite.openDatabaseAsync('store.db');
 
     const product = await db.getAllAsync('SELECT * FROM products WHERE barcode = $barcode', { $barcode: barcode });
@@ -133,7 +149,7 @@ export const getProductByBarcode = async (barcode) => {
  * Función que devuelve todas las categorias registradas de los productos
  * @returns Arreglo con todas las categorias registradas: Object[]
  */
-export const getCategories = async () => {
+const getCategories = async () => {
     const db = await SQLite.openDatabaseAsync('store.db');
 
     const allCategories = await db.getAllAsync(`SELECT * FROM categories`);
@@ -148,4 +164,15 @@ export const getCategories = async () => {
         resolve(arregloPrueba);
     })
 
+}
+
+export {
+    addNewProduct,
+    editProduct,
+    editProductInShoppingCart,
+    deleteProduct,
+    getCategories,
+    getProductById,
+    getProductByBarcode,
+    getProductsTest,
 }

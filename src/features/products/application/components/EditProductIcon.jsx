@@ -1,20 +1,17 @@
 import {
     View,
     Text,
-    Alert,
-    Button,
     StyleSheet,
-    TouchableOpacity, Vibration, Modal, TextInput, Image
+    TouchableOpacity,
+    Modal, TextInput, Image
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { useSQLiteContext } from 'expo-sqlite';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { pickImage, saveImageToDirectory, takePhoto } from '../../../../service/galleryService';
-import { editProduct, getProductsTest,getCategories } from '../../datasource/productDataSource';
+import { editProduct,getCategories } from '../../datasource/productDataSource';
 
 export default function EditProductIcon({ product, getProductsWithUseCallback }) {
-    const db = useSQLiteContext();
 
     //Modal
     const [modalVisible, setModalVisible] = useState(false);

@@ -9,13 +9,12 @@ import {
     TextInput,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useSQLiteContext } from 'expo-sqlite';
+import { addProductToShoppingCart } from '../../datasource/shoppingCartDataSource';
 export default function ShoppingCart({ product, getProductsWithUseCallback }) {
-    const db = useSQLiteContext();
     const [modalVisible, setModalVisible] = useState(false);
     const [quantity, setQuantity] = useState('');
 
-    console.log(product,'18');
+    console.log(product, '17');
 
     const handleTouch = () => {
         setModalVisible(true);
@@ -24,20 +23,13 @@ export default function ShoppingCart({ product, getProductsWithUseCallback }) {
         setQuantity('');
         setModalVisible(false);
     };
+
     const handleAddCarrito = async () => {
 
         try {
-            const statement = await db.prepareAsync('INSERT INTO carrito(id_producto,cantidad) VALUES (?,?)');
-            await statement.executeAsync([parseInt(product.id), parseInt(quantity)]);
+            const message = await addProductToShoppingCart(product.id, quantity);
+            alert(message);
 
-            const newQuantity = parseInt(product.quantity) - parseInt(quantity);
-            console.log("29", typeof newQuantity, newQuantity);
-
-            await db.runAsync('UPDATE products SET quantity = ? WHERE id = ?', [newQuantity, product.id]);
-            console.log("Producto agregado", product, " ID: " + product.id);
-
-            alert('Producto agregado', product);
-            getProductsWithUseCallback();
             setModalVisible(false);
             setQuantity('');
 
