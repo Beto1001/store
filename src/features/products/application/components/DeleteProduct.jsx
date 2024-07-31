@@ -1,22 +1,16 @@
 import { View, Text, Alert, Button, StyleSheet, TouchableOpacity, Vibration } from 'react-native';
 import React from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useSQLiteContext } from 'expo-sqlite';
+import { deleteProduct } from '../../datasource/productDataSource';
 
 export default function DeleteProduct({ product,getProductsWithUseCallback }) {
-    const db = useSQLiteContext();
     const handleDelete = async () => {
         console.log('7', { product });
         try {
-
-            // db.withTransactionAsync(async () => {
-            //     await db.runAsync('DELETE FROM products WHERE id = ?;',[product.id])
-
-            // })
-
+            // await deleteProduct(product.id);
             // Alert.alert("Alerta", "Producto borrado con exito");
             Alert.alert("Alerta", "Linea de codigo comentada, no borra");
-            getProductsWithUseCallback();
+            // getProductsWithUseCallback();
 
             console.log('Producto eliminado con éxito');
          

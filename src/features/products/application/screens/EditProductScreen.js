@@ -32,15 +32,11 @@ export default function EditProductScreen({navigation}) {
     const getProductsWithUseCallback = useCallback(()=>{
         getAllProducts();
  
-     },[products]);
+    },[products]);
 
     useEffect(() => {
-        getProductsWithUseCallback();
-        focusListener = navigation.addListener('focus', () => {
-            getProductsWithUseCallback();
-        });
       
-    }, []);
+    }, [getProductsWithUseCallback]);
 
     return (
         <ScrollView>
@@ -62,7 +58,7 @@ export default function EditProductScreen({navigation}) {
                 {products.length === 0 ? (
                     <View>
                         <Text>No hay productos registrados</Text>
-                        <TouchableOpacity onPress={changeScreen}>
+                        <TouchableOpacity onPress={getProductsWithUseCallback}>
                             <Text>Aun no hay productos registrados, ve a registrar</Text>
                         </TouchableOpacity>
                     </View>

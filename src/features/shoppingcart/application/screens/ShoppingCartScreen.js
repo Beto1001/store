@@ -4,58 +4,61 @@ import { useSQLiteContext } from 'expo-sqlite';
 import ShoppingCartProducts from '../components/ShoppingCartProducts';
 import { getShoppingCart } from '../../datasource/shoppingCartDataSource';
 import { getProductById } from '../../../products/datasource/productDataSource';
-export default function ShoppingCartScreen({ navigation }) {
+
+export default function ShoppingCartScreen({navigation}) {
 
     let focusListener = null;
-    const db = useSQLiteContext();
 
     const [shoppingCart, setShoppingCart] = useState([]);
     let totalPagar = 0;
     let contador = 0;
-    const arregloDeProductos = [];
 
-    const getAllShoppingCarts = () => {
-        getShoppingCart()
-            .then((response) => {
-                if (response.length > 0) {
-                    setShoppingCart(response);
+    /**
+     * Función para traer todos los productos de la tabla carrito y darle el valor a shoppingCart
+     */
+    const getAllShoppingCarts = async () => {
+        const arrayShoppingCart = await getShoppingCart();
+        setShoppingCart(arrayShoppingCart);
 
-                    shoppingCart.map((carrito, index) => {
-                        getProductById(carrito.id_producto)
-                            .then((response) => {
-                                arregloDeProductos.push(response[0]);
-                                console.log('28 Arreglo de productos', arregloDeProductos);
-                            })
-                            .catch((error) => console.log(error))
-                    });
-                }
-            })
-            .catch(error => console.log(error))
     }
 
+    /**
+     * Funcion que vuelve a hacer una petición a la tabla carrito cuando se agrega un nuevo elemento
+     */
     const getShoppingCartUseCallback = useCallback(() => {
         getAllShoppingCarts();
     }, [shoppingCart]);
 
-    const callRenderShoppingCartCards = (carrito, index, arregloDeProductos) => {
-        console.log('41 arreglo de productos en cartScreen', arregloDeProductos);
+    /**
+     * Funcion para llamar el componente que renderiza las tarjetas de los productos en el carrito
+     * Lo hace una vez que el arreglo shoppingCart esté lleno
+     * @param {object} carrito arreglo con la información individual de la tabla carrito: Object[]
+     * @param {number} index posición del elemento en la lista arreglo shoppingCart: number
+     * @returns Renderiza las tarjetas con la información que se le ha mandado
+     */
+    const callRenderShoppingCartCards = async (carrito, index) => {
+        const product = await getProductById(carrito.id_producto);
+        totalPagar += parseFloat(product[0].price) * carrito.cantidad;
+        contador += 1;
+
         return (
             <View key={index}>
                 <ShoppingCartProducts
                     key={carrito.id}
-                    products={arregloDeProductos}
+                    products={product[0]}
                     carrito={carrito}
                 />
-                <Text>{carrito.id}</Text>
+                {shoppingCart.length === contador &&
+                    <Text>Total a pagar: $ {totalPagar}</Text>
+                }
             </View>
         )
     }
 
     useEffect(() => {
 
-        getAllShoppingCarts();
-
-    }, []);
+      
+    }, [getShoppingCartUseCallback]);
 
     return (
         <ScrollView>
@@ -66,9 +69,11 @@ export default function ShoppingCartScreen({ navigation }) {
                     </View>
                 ) : (
                     <View>
-                        {shoppingCart.map((carrito, index) => (
-                            callRenderShoppingCartCards(carrito, index, arregloDeProductos)
-                        ))}
+                        <Suspense>
+                            {shoppingCart.map((carrito, index) => (
+                                callRenderShoppingCartCards(carrito, index)
+                            ))}
+                        </Suspense>
                     </View>
                 )}
             </View>
@@ -94,3 +99,4 @@ const styles = StyleSheet.create({
     },
 
 });
+

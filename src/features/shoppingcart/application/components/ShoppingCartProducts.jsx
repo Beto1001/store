@@ -8,14 +8,14 @@ export default function ShoppingCartProducts({ products, carrito }) {
 
     return (
         <TouchableOpacity style={styles.container} onPress={() => Vibration.vibrate()}>
-            {/* <Text style={styles.elementtext}>{productsTestExample.name}</Text>
-            <Image source={{ uri: productsTestExample.image_url }} style={styles.imageContainer} />
+            <Text style={styles.elementtext}>{products.name}</Text>
+            <Image source={{ uri: products.image_url }} style={styles.imageContainer} />
 
-            <Text>Precio unitario: $ {productsTestExample.price}</Text>
-            <Text>Cantidad: {cantidad}</Text>
-            <Text>Total a pagar producto individual $ {totalPagar}</Text>
+            <Text>Precio unitario: $ {products.price}</Text>
+            <Text>Cantidad: {carrito.cantidad}</Text>
+            {/* <Text>Total a pagar producto individual $ {totalPagar}</Text> */}
 
-            <TouchableOpacity style={styles.carritodelete} onPress={handleDelete}>
+            {/* <TouchableOpacity style={styles.carritodelete} onPress={handleDelete}>
                 <Text>Borrar</Text>
             </TouchableOpacity> */}
 
@@ -57,3 +57,4 @@ const styles = StyleSheet.create({
 
     }
 });
+

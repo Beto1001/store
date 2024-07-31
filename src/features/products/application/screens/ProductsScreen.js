@@ -6,7 +6,6 @@ import { getProductsTest } from '../../datasource/productDataSource';
 import { Skeleton } from 'react-native-skeletons';
 export default function ProductsScreen({ navigation }) {
 
-    let focusListener = null;
     let screen = '';
     const test = navigation.getState().routeNames;
 
@@ -30,32 +29,21 @@ export default function ProductsScreen({ navigation }) {
         }, 2000);
     }, []);
     /**
-     * Funcion para cargar los productos
+     * Funcion para llenar el arreglo de productos
      */
-    const getAllProducts = () => {
-        getProductsTest()
-            .then(response => setProducts(response))
-            .catch(error => console.log(error))
-
-        console.log('20 ProductsScreen', products);
+    const getAllProducts = async () => {
+        const arrayProducts = await getProductsTest();
+        setProducts(arrayProducts);
     }
 
     const getProductsWithUseCallback = useCallback(() => {
-        console.log('23');
         getAllProducts();
 
     }, [products]);
 
     useEffect(() => {
-        console.log('28');
-        getProductsWithUseCallback();
-        console.log('33', navigation);
-
-        focusListener = navigation.addListener('focus', () => {
-            console.log('35 Actualizando cambios');
-            getProductsWithUseCallback();
-        });
-    }, []);
+       
+    }, [getProductsWithUseCallback]);
 
     return (
         <ScrollView
