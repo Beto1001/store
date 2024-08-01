@@ -28,6 +28,8 @@ const getProductsTest = async () => {
  * @param {number} price precio del producto: number
  * @param {string} image_url URL de la imagen del producto: string
  * @param {string} category categoria del producto: string
+ * @returns Mensaje de producto registrado
+ * 
  */
 const addNewProduct = async (
     name,
@@ -42,7 +44,7 @@ const addNewProduct = async (
     const statement = await db.prepareAsync('INSERT INTO products(name,barcode,description,quantity,price,image_url,category) VALUES ($name,$barcode,$description,$quantity,$price,$image_url,$category);');
 
     try {
-        let result = await statement.executeAsync({
+        await statement.executeAsync({
             $name: name,
             $barcode: barcode,
             $description: description,
@@ -51,7 +53,9 @@ const addNewProduct = async (
             $image_url: image_url,
             $category: category
         });
-        console.log('Producto registrado:', result.lastInsertRowId, result.changes);
+        return new Promise((resolve,reject)=>{
+            resolve('Producto registrado');
+        })
 
     } finally {
         await statement.finalizeAsync();
@@ -80,6 +84,7 @@ const editProduct = async (
     const db = await SQLite.openDatabaseAsync('store.db');
 
     await db.runAsync('UPDATE products SET name = ? , description = ? ,quantity = ? ,price = ? ,category = ?,image_url = ? WHERE id = ?', [name, description, parseInt(quantity), parseFloat(price), category, image_url, productId]);
+
     return new Promise((resolve, reject) => {
         resolve('Producto actualizado con exito');
     })

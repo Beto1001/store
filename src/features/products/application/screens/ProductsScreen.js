@@ -1,9 +1,10 @@
 import { View, Text, StyleSheet, TouchableOpacity, Vibration, ScrollView, RefreshControl, SafeAreaView } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { Suspense, useCallback, useEffect, useState } from 'react'
 import ProductCard from '../components/ProductCard';
 import { FontAwesome } from '@expo/vector-icons';
 import { getProductsTest } from '../../datasource/productDataSource';
 import { Skeleton } from 'react-native-skeletons';
+import Loading from '../../../components/Loading';
 export default function ProductsScreen({ navigation }) {
 
     let screen = '';
@@ -44,7 +45,7 @@ export default function ProductsScreen({ navigation }) {
         focusListener = navigation.addListener('focus', () => {
             getProductsWithUseCallback();
         });
-       
+
     }, []);
 
     return (
@@ -64,14 +65,16 @@ export default function ProductsScreen({ navigation }) {
                 <ScrollView style={styles.scrollView}>
 
                     <ScrollView horizontal={false} >
-                        {products.map((product) => (
-                            <ProductCard
-                                key={product.id}
-                                product={product}
-                                getProductsWithUseCallback={getProductsWithUseCallback}
-                                screen={screen}
-                            />
-                        ))}
+                        <Suspense fallback={<Loading/>}>
+                            {products.map((product) => (
+                                <ProductCard
+                                    key={product.id}
+                                    product={product}
+                                    getProductsWithUseCallback={getProductsWithUseCallback}
+                                    screen={screen}
+                                />
+                            ))}
+                        </Suspense>
                     </ScrollView >
                 </ScrollView>
 

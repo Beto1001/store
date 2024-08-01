@@ -11,9 +11,9 @@ import {
 } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { pickImage,saveImageToDirectory,takePhoto } from "../../../../service/galleryService";
+import { pickImage, saveImageToDirectory, takePhoto } from "../../../../service/galleryService";
 import { SelectList } from 'react-native-dropdown-select-list'
-import { addNewProduct,getCategories } from "../../datasource/productDataSource";
+import { addNewProduct, getCategories, getProductByBarcode } from "../../datasource/productDataSource";
 
 export default function RegisterProductScreen() {
     //Camera propierties
@@ -34,7 +34,11 @@ export default function RegisterProductScreen() {
     const [productImage, setProductImage] = useState(null);
     const [productCategory, setProductCategory] = useState('');
 
+    //Categories
     const [category, setCategory] = useState([]);
+
+    //ButtonDisabled
+    const [disabled, setDisabled] = useState(true);
 
     if (!permission) {
         // Camera permissions are still loading.
@@ -69,43 +73,88 @@ export default function RegisterProductScreen() {
             console.log(result);
         } else {
             console.log('Error: No se pudo obtener la URI de la imagen seleccionada');
+            alert('No se ha podido recuperar la imagen');
         }
     };
 
-    const getAllCategories = () => {
-        getCategories()
-        .then(response=>setCategory(response))
-        .catch(error=>console.log(error))
+    const getAllCategories = async () => {
+        const allCategories = await getCategories();
+        setCategory(allCategories);
     }
 
+    const validateForm = () => {
+        try {
+            console.log('87', productName);
+            console.log('88', productDescription);
+            console.log('89', quantity);
+            console.log('90', productPrice);
+            console.log('91', productName);
+            console.log('92', productImage);
+            console.log('93', productCategory);
+            if (productName != '' && productDescription != '' && quantity > 0 && quantity.includes('.') && productPrice > 0 && productImage && productCategory != '') {
+                return true;
+
+            } else {
+                return false;
+            }
+
+
+        } catch (error) {
+            console.log('No se han podido validar los campos correctamente', error);
+            return false;
+
+
+        }
+
+    }
     const handleAddProduct = async () => {
         try {
-            const imagePath = productImage ? await saveImageToDirectory(productImage[0].uri) : null;
-            addNewProduct(
-                productName, 
-                productCode, 
-                productDescription,
-                quantity,
-                productPrice, 
-                imagePath, 
-                productCategory
-            );
-            console.log('Producto agregado con éxito');
-            setProductName('');
-            setProductDescription('');
-            setQuantity('');
-            setProductPrice('');
-            setProductCategory('');
-            setProductImage(null);
+            const formValid = validateForm();
+            console.log('113', formValid);
+            if (validateForm()) {
+                const imagePath = productImage ? await saveImageToDirectory(productImage[0].uri) : null;
+                const message = await addNewProduct(
+                    productName,
+                    productCode,
+                    productDescription,
+                    quantity,
+                    productPrice,
+                    imagePath,
+                    productCategory
+                );
+                alert(message);
+                setProductName('');
+                setProductDescription('');
+                setQuantity('');
+                setProductPrice('');
+                setProductCategory('');
+                setProductImage(null);
+                setModalVisible(false);
+
+            }
+            else {
+                alert('Llena los campos correctamente por favor');
+            }
+
         } catch (error) {
             console.log(error);
+            alert('Algo ha salido mal, por favor contacta al servicio tencnico');
         }
     };
-    const handleBarCodeScanned = ({ type, data }) => {
+    const handleBarCodeScanned = async ({ type, data }) => {
         setScanned(true);
+        setShowScanner(false);
+
+        const productExistInStock = await getProductByBarcode(data);
+
+        if (productExistInStock.length != 0) {
+
+            alert('Ese producto ya se encuentra registrado');
+            return;
+        }
+
         setProductCode(data);
         setModalVisible(true);
-        setShowScanner(false);
     };
 
     const restartScan = () => {
@@ -156,6 +205,7 @@ export default function RegisterProductScreen() {
                             />
                             <Text style={styles.codeText}> {productCode}</Text>
                         </View>
+                        <Text style={styles.textlabel}>Nombre</Text>
                         <TextInput
                             style={styles.input}
                             onChangeText={setProductName}
@@ -163,6 +213,7 @@ export default function RegisterProductScreen() {
                             placeholder="Nombre"
                             maxLength={30}
                         />
+                        <Text style={styles.textlabel}>Cantidad</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Cantidad"
@@ -170,6 +221,7 @@ export default function RegisterProductScreen() {
                             value={quantity}
                             onChangeText={text => setQuantity(text)}
                         />
+                        <Text style={styles.textlabel}>Precio</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Precio"
@@ -177,6 +229,7 @@ export default function RegisterProductScreen() {
                             value={productPrice}
                             onChangeText={text => setProductPrice(text)}
                         />
+                        <Text style={styles.textlabel}>Descripción</Text>
                         <TextInput
                             style={styles.input}
                             onChangeText={setProductDescription}
@@ -184,31 +237,32 @@ export default function RegisterProductScreen() {
                             placeholder="Descripción"
                             maxLength={30}
                         />
+                        <Text style={styles.textlabel}>Caregoría</Text>
                         <SelectList
                             setSelected={setProductCategory}
                             data={category}
                             save="value"
                             placeholder="Seleccionar categoría"
                         />
-                        <TouchableOpacity style={styles.buttonImageContainer} onPress={handleSelectImage}>
-                            <Text style={styles.buttonText}>Seleccionar Imagen</Text>
-                        </TouchableOpacity>
+
                         <TouchableOpacity style={styles.buttonTakePhotoContainer} onPress={handleTakePhoto}>
                             <Text style={styles.buttonText}>Tomar foto</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonImageContainer} onPress={handleSelectImage}>
+                            <Text style={styles.buttonText}>Seleccionar Imagen</Text>
                         </TouchableOpacity>
                         {productImage &&
                             <View style={styles.imageContainer}>
                                 <Image source={{ uri: productImage[0].uri }} style={styles.selectedImage} />
                             </View>}
-                        <TouchableOpacity style={styles.buttonsContainer}>
+                        <View style={styles.buttonsContainer}>
                             <TouchableOpacity style={styles.cancelButton} onPress={handleOcult}>
                                 <Text style={styles.buttonsTextGeneric}>Cancelar</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.buttonRegister} onPress={handleAddProduct}>
                                 <Text style={styles.buttonsTextGeneric}>Guardar</Text>
                             </TouchableOpacity>
-
-                        </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </Modal>
@@ -307,17 +361,17 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         height: 50,
-        borderRadius: 15
+        borderRadius: 15,
+        marginTop: 8
     },
     buttonTakePhotoContainer: {
         marginTop: 10,
-        backgroundColor: '#52F74A',
+        backgroundColor: '#B1B1B1',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         height: 50,
         borderRadius: 15
-
     },
     buttonImageText: {
         fontSize: 18,
@@ -327,7 +381,6 @@ const styles = StyleSheet.create({
     cameraContainer: {
         width: 400,
         height: 400,
-
     },
     selectedImage: {
         width: 100,
@@ -340,4 +393,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
+    textlabel: {
+        fontSize: 14,
+        fontWeight: 'bold',
+
+    }
 });

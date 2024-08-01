@@ -6,10 +6,13 @@ import {
     ActivityIndicator
 } from 'react-native'
 import React, { Suspense, useCallback, useEffect, useState } from 'react'
+
+import { useSQLiteContext } from 'expo-sqlite';
+
 import ShoppingCartProducts from '../components/ShoppingCartProducts';
+import Loading from '../../../components/Loading';
 import { getShoppingCart } from '../../datasource/shoppingCartDataSource';
 import { getProductById } from '../../../products/datasource/productDataSource';
-import { useSQLiteContext } from 'expo-sqlite';
 
 export default function ShoppingCartScreen({ navigation }) {
 
@@ -90,15 +93,6 @@ export default function ShoppingCartScreen({ navigation }) {
     );
 }
 
-function Loading() {
-    return (
-        <View style={styles.loadingspinner}>
-            <Text>Cargando</Text>
-            <ActivityIndicator size="large" />
-
-        </View>)
-
-}
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -114,11 +108,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: "#071C54",
     },
-    loadingspinner:{
-        display:'flex',
-        justifyContent:'center',
-        alignItems:'center',
-    }
+
 
 });
 
