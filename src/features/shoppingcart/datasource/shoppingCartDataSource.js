@@ -64,53 +64,21 @@ const getShoppingCartById = async (carritoId) => {
 /**
  * Función para buscar un registro del carrito por su ID
  * @param {number} carritoId ID del carrito a buscar: number
- * @param {number} productId ID del producto que se agrego al carrito: number
  * @param {number} cantidad cantidad de productos agregados al carrito: number
- * @returns Arreglo con la información del carrito: Object[]
+ * @returns mensaje de actualización exitosa
  */
-const editShoppingCartById = async (carritoId, productId, cantidad) => {
+const editShoppingCartById = async (carritoId, cantidad) => {
     //DB
     const db = await SQLite.openDatabaseAsync('store.db');
+    const equalQuantity = await getShoppingCartById(carritoId);
 
-    //CarritoTable
-    const carrito = await getShoppingCartById(carritoId);
-    // const carritoQuantity = carrito[0].cantidad;
-    
-    //ProductsTable
-    
-    // const productOnShoppingCart = await getProductById(productId);
-    // const productQuantity = productOnShoppingCart[0].quantity;
+    if (cantidad === equalQuantity[0].cantidad) {
+        return new Promise((resolve, reject) => {
+            resolve('Actualización exitosa');
+        })
+    }
 
-    // let diferencia = 0;
-    // let nuevaCantidad = 0;
-
-    /*TODO 01: Editar la cantidad de productos 
-      * Si la cantidad de productos es mayor 
-      * debo obtener la diferencia y restarla a la cantidad original de los productos,
-      * en caso de que sea menor, debo sumarle esa diferencia entre la original y la nueva
-      * a la cantidad de los productos
-      * por ultimo debo regresar el carrito con la nueva cantidad
-      * 
-      */
-    // if (cantidad > carritoQuantity) {
-
-    //     diferencia = cantidad - carritoQuantity;
-
-    //     nuevaCantidad = productQuantity - diferencia;
-
-    //     await editProductInShoppingCart(productOnShoppingCart[0].id, nuevaCantidad);
-
-    // }
-    // else if (cantidad < carritoQuantity) {
-    //     diferencia = carritoQuantity - cantidad;
-
-    //     nuevaCantidad = productQuantity + diferencia;
-
-    //     await editProductInShoppingCart(productOnShoppingCart[0].id, nuevaCantidad);
-
-    // }
-    // await db.runAsync('UPDATE carrito SET cantidad = ? WHERE id = ?', [cantidad, carritoId]);
-
+    await db.runAsync('UPDATE carrito SET cantidad = ? WHERE id = ?', [cantidad, carritoId]);
 
     return new Promise((resolve, reject) => {
         resolve('Actualización exitosa');

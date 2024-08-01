@@ -138,7 +138,7 @@ export default function RegisterProductScreen() {
 
         } catch (error) {
             console.log(error);
-            alert('Algo ha salido mal, por favor contacta al servicio tencnico');
+            alert('Algo ha salido mal, por favor contacta al servicio tecnico');
         }
     };
     const handleBarCodeScanned = async ({ type, data }) => {
