@@ -1,37 +1,50 @@
-import { 
-    View, 
-    Text, 
-    TouchableOpacity, 
-    StyleSheet, 
-    Vibration, 
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+    Vibration,
     Modal,
     TextInput,
- } from 'react-native'
+} from 'react-native'
 import React, { useState } from 'react'
-import { MaterialIcons } from '@expo/vector-icons';
-import { editShoppingCartById} from '../../datasource/shoppingCartDataSource';
-
-export default function ShoppingCartEditButton({ shoppingcart,getShoppingCartUseCallback }) {
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import { editShoppingCartById } from '../../datasource/shoppingCartDataSource';
+import { getProductById } from '../../../products/datasource/productDataSource';
+export default function ShoppingCartEditButton({ shoppingcart, getShoppingCartUseCallback }) {
     //Modal
     const [modalVisible, setModalVisible] = useState(false);
     const [quantity, setQuantity] = useState(`${shoppingcart.cantidad}`);
 
-    console.log('7', shoppingcart);
     const showEditModal = () => {
         Vibration.vibrate();
         setModalVisible(true);
     }
     const ocultModal = () => {
         setModalVisible(false);
+        setQuantity(`${shoppingcart.cantidad}`);
     }
     const handleSendItems = async () => {
-        // const carrito = await editShoppingCartById(shoppingcart.id, shoppingcart.id_producto,quantity);
-        // console.log('====================================');
-        // console.log('20',carrito);
-        // console.log('====================================');
+        if (quantity <= 0) {
+            alert('Ingresa una cantidad mayor a 0');
+            return;
+        }
+
+        const productOnShoppingCart = await getProductById(shoppingcart.id_producto);
+        const productQuantity = productOnShoppingCart[0].quantity;
+        const productName = productOnShoppingCart[0].name;
+
+        if (quantity > productQuantity) {
+            alert(`Solo hay ${productQuantity} unidad(es) en el inventario de ${productName} y tu has puesto ${quantity} unidad(es)`);
+            return;
+        }
+
+        const messaje = await editShoppingCartById(shoppingcart.id, quantity);
+        alert(messaje);
+
         setModalVisible(false);
         getShoppingCartUseCallback();
-     
+
     }
     return (
         <TouchableOpacity>
@@ -46,7 +59,7 @@ export default function ShoppingCartEditButton({ shoppingcart,getShoppingCartUse
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text>Cantidad: {shoppingcart.cantidad}</Text>
+                        <Text style={styles.textlabel}>Cantidad</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Cantidad"
@@ -54,12 +67,17 @@ export default function ShoppingCartEditButton({ shoppingcart,getShoppingCartUse
                             value={quantity}
                             onChangeText={text => setQuantity(text)}
                         />
-                        <TouchableOpacity onPress={ocultModal}>
-                            <Text>Ocultar</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={handleSendItems}>
-                            <Text>Mandar información</Text>
-                        </TouchableOpacity>
+                        <View style={styles.optionscontainer}>
+                            <TouchableOpacity style={styles.cancelbutton} onPress={ocultModal}>
+                                <MaterialIcons name="cancel-presentation" size={24} color="black" />
+                                <Text>Cancelar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.confirmbutton} onPress={handleSendItems}>
+                                <FontAwesome name="save" size={24} color="black" />
+                                <Text>Confirmar</Text>
+                            </TouchableOpacity>
+                        </View>
+
                     </View>
                 </View>
             </Modal>
@@ -90,4 +108,48 @@ const styles = StyleSheet.create({
         padding: 20,
         width: '80%',
     },
+    textlabel: {
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+    input: {
+        borderColor: '#ccc',
+        borderWidth: 1,
+        padding: 10,
+        marginBottom: 10,
+        width: '100%',
+    },
+    optionscontainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        gap: 10,
+        marginTop: 4
+    },
+    cancelbutton: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        borderWidth: 1,
+        borderColor: 'black',
+        width: 120,
+        height: 40,
+        gap: 10,
+        borderRadius: 4,
+    },
+    confirmbutton: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        borderWidth: 1,
+        borderColor: 'black',
+        width: 120,
+        height: 40,
+        gap: 10,
+        borderRadius: 4,
+    }
+
 });
