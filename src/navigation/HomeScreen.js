@@ -16,57 +16,55 @@ const Tab = createBottomTabNavigator();
 
 export default function HomeScreen() {
     return (
-        <NavigationContainer>
-            <Tab.Navigator
-                screenOptions={({ route }) => ({
-                    tabBarIcon: ({ focused, color, size }) => {
-                        let iconName;
+        <Tab.Navigator
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                    let iconName;
 
-                        switch (route.name) {
-                            case 'Products':
-                                iconName = focused ? 'storefront' : 'storefront-outline';
+                    switch (route.name) {
+                        case 'Products':
+                            iconName = focused ? 'storefront' : 'storefront-outline';
 
-                                return <Ionicons name={iconName} size={size} color={color} />;
+                            return <Ionicons name={iconName} size={size} color={color} />;
 
-                            case 'ShoppingCart':
-                                iconName = focused ? 'shopping-cart' : 'shopping-cart-checkout';
+                        case 'ShoppingCart':
+                            iconName = focused ? 'shopping-cart' : 'shopping-cart-checkout';
 
-                                return <MaterialIcons name={iconName} size={size} color={color} />
+                            return <MaterialIcons name={iconName} size={size} color={color} />
 
-                            case 'ProductScanner':
-                                iconName = focused ? 'barcode-scan' : 'scan-helper';
+                        case 'ProductScanner':
+                            iconName = focused ? 'barcode-scan' : 'scan-helper';
 
-                                return <MaterialCommunityIcons name={iconName} size={size} color={color} />
+                            return <MaterialCommunityIcons name={iconName} size={size} color={color} />
 
-                            case 'EditScreen':
+                        case 'EditScreen':
 
-                                return focused ?
-                                    <FontAwesome name="edit" size={size} color={color} /> :
+                            return focused ?
+                                <FontAwesome name="edit" size={size} color={color} /> :
 
-                                    <FontAwesome5 name="edit" size={size} color={color} />
+                                <FontAwesome5 name="edit" size={size} color={color} />
 
-                            case 'SalesScreen':
+                        case 'SalesScreen':
 
-                                iconName = focused ? 'shopping' : 'shopping-outline';
+                            iconName = focused ? 'shopping' : 'shopping-outline';
 
-                                return <MaterialCommunityIcons name={iconName} size={size} color={color} />
+                            return <MaterialCommunityIcons name={iconName} size={size} color={color} />
 
-                            default:
-                                break;
-                        }
-                    },
-                    tabBarActiveTintColor: '#176FFE',
-                    tabBarInactiveTintColor: 'gray',
-                })}
-            >
-                <Tab.Screen name="Products" component={ProductsScreen} />
-                <Tab.Screen name="ProductScanner" component={RegisterProductScreen} />
-                <Tab.Screen name="EditScreen" component={EditProductScreen} />
-                <Tab.Screen name="ShoppingCart" component={ShoppingCartScreen} />
-                <Tab.Screen name="SalesScreen" component={SalesScreen} />
+                        default:
+                            break;
+                    }
+                },
+                tabBarActiveTintColor: '#176FFE',
+                tabBarInactiveTintColor: 'gray',
+            })}
+        >
+            <Tab.Screen name="Products" component={ProductsScreen} />
+            <Tab.Screen name="ProductScanner" component={RegisterProductScreen} />
+            <Tab.Screen name="EditScreen" component={EditProductScreen} />
+            <Tab.Screen name="ShoppingCart" component={ShoppingCartScreen} />
+            <Tab.Screen name="SalesScreen" component={SalesScreen} />
 
-            </Tab.Navigator>
-        </NavigationContainer>
+        </Tab.Navigator>
     )
 }
 

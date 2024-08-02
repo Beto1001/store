@@ -34,6 +34,13 @@ export async function initializeDatabase(db) {
             quantity INTEGER NOT NULL,
             payment REAL NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS usuarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            contrasena TEXT NOT NULL,
+            rol TEXT NOT NULL
+        );
+      
         `);
         console.log("Database correct");
         
@@ -43,3 +50,6 @@ export async function initializeDatabase(db) {
     }
 }
 
+// INSERT INTO usuarios (name,contrasena,rol) VALUES ('misifus04','misifus2005','ADMIN');
+// INSERT INTO usuarios (name,contrasena,rol) VALUES ('cris123','cris1999','USER');
+// INSERT INTO usuarios (name,contrasena,rol) VALUES ('lore123','lore2024','USER');
