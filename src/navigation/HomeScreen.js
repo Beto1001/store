@@ -11,7 +11,7 @@ import EditProductScreen from '../features/products/application/screens/EditProd
 import ProductsScreen from '../features/products/application/screens/ProductsScreen';
 import ShoppingCartScreen from '../features/shoppingcart/application/screens/ShoppingCartScreen';
 import RegisterProductScreen from '../features/products/application/screens/RegisterProductScreen';
-
+import SalesScreen from '../features/sales/application/screens/SalesScreen';
 const Tab = createBottomTabNavigator();
 
 export default function HomeScreen() {
@@ -40,10 +40,17 @@ export default function HomeScreen() {
 
                             case 'EditScreen':
 
-                                return focused ? 
-                                         <FontAwesome name="edit" size={size} color={color} /> :
+                                return focused ?
+                                    <FontAwesome name="edit" size={size} color={color} /> :
 
-                                         <FontAwesome5 name="edit" size={size} color={color} />
+                                    <FontAwesome5 name="edit" size={size} color={color} />
+
+                            case 'SalesScreen':
+
+                                iconName = focused ? 'shopping' : 'shopping-outline';
+
+                                return <MaterialCommunityIcons name={iconName} size={size} color={color} />
+
                             default:
                                 break;
                         }
@@ -56,6 +63,7 @@ export default function HomeScreen() {
                 <Tab.Screen name="ProductScanner" component={RegisterProductScreen} />
                 <Tab.Screen name="EditScreen" component={EditProductScreen} />
                 <Tab.Screen name="ShoppingCart" component={ShoppingCartScreen} />
+                <Tab.Screen name="SalesScreen" component={SalesScreen} />
 
             </Tab.Navigator>
         </NavigationContainer>

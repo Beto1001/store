@@ -13,6 +13,7 @@ import ShoppingCartProducts from '../components/ShoppingCartProducts';
 import Loading from '../../../components/Loading';
 import { getShoppingCart } from '../../datasource/shoppingCartDataSource';
 import { getProductById } from '../../../products/datasource/productDataSource';
+import CloseSale from '../../../sales/application/components/CloseSale';
 
 export default function ShoppingCartScreen({ navigation }) {
 
@@ -59,7 +60,10 @@ export default function ShoppingCartScreen({ navigation }) {
                     getShoppingCartUseCallback={getShoppingCartUseCallback}
                 />
                 {shoppingCart.length === contador &&
-                    <Text style={styles.payment}>Total a pagar: $ {totalPagar}</Text>
+                    <View>
+                        <Text style={styles.payment}>Total a pagar: $ {totalPagar}</Text>
+                        <CloseSale shoppingCart={shoppingCart} totalPay={totalPagar} getShoppingCartUseCallback={getShoppingCartUseCallback}/>
+                    </View>
                 }
             </View>
         )
@@ -69,7 +73,7 @@ export default function ShoppingCartScreen({ navigation }) {
         focusListener = navigation.addListener('focus', () => {
             getShoppingCartUseCallback();
         });
-      
+
     }, []);
 
     return (
@@ -81,7 +85,7 @@ export default function ShoppingCartScreen({ navigation }) {
                     </View>
                 ) : (
                     <View>
-                        <Suspense fallback={<Loading/>}>
+                        <Suspense fallback={<Loading />}>
                             {shoppingCart.map((carrito, index) => (
                                 callRenderShoppingCartCards(carrito, index)
                             ))}

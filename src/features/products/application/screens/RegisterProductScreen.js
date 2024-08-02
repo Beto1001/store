@@ -84,57 +84,54 @@ export default function RegisterProductScreen() {
 
     const validateForm = () => {
         try {
-            console.log('87', productName);
+
             console.log('88', productDescription);
             console.log('89', quantity);
             console.log('90', productPrice);
             console.log('91', productName);
             console.log('92', productImage);
             console.log('93', productCategory);
-            if (productName != '' && productDescription != '' && quantity > 0 && quantity.includes('.') && productPrice > 0 && productImage && productCategory != '') {
+            if (productName != '' && productDescription != '' && quantity > 0 && quantity.includes('.') && productPrice > 0 && productImage != null && productCategory != '') {
                 return true;
 
             } else {
                 return false;
             }
 
-
         } catch (error) {
             console.log('No se han podido validar los campos correctamente', error);
             return false;
-
 
         }
 
     }
     const handleAddProduct = async () => {
         try {
-            const formValid = validateForm();
-            console.log('113', formValid);
-            if (validateForm()) {
-                const imagePath = productImage ? await saveImageToDirectory(productImage[0].uri) : null;
-                const message = await addNewProduct(
-                    productName,
-                    productCode,
-                    productDescription,
-                    quantity,
-                    productPrice,
-                    imagePath,
-                    productCategory
-                );
-                alert(message);
-                setProductName('');
-                setProductDescription('');
-                setQuantity('');
-                setProductPrice('');
-                setProductCategory('');
-                setProductImage(null);
-                setModalVisible(false);
+            if (productName != '' && productDescription != '' && quantity > 0 && quantity.includes('.') && productPrice > 0 && productImage != null && productCategory != '') {
+                alert('Llena correctamente lo campos por favor');
+                return;
+            }
 
-            }
-            else {
-                alert('Llena los campos correctamente por favor');
-            }
+            const imagePath = productImage ? await saveImageToDirectory(productImage[0].uri) : null;
+            const message = await addNewProduct(
+                productName,
+                productCode,
+                productDescription,
+                quantity,
+                productPrice,
+                imagePath,
+                productCategory
+            );
+            alert(message);
+            setProductName('');
+            setProductDescription('');
+            setQuantity('');
+            setProductPrice('');
+            setProductCategory('');
+            setProductImage(null);
+            setModalVisible(false);
+
+
 
         } catch (error) {
             console.log(error);

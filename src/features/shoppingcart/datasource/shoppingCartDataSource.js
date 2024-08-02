@@ -61,6 +61,17 @@ const getShoppingCartById = async (carritoId) => {
     })
 
 }
+
+/**
+ * Función que elimina todos los productos que estaban en el carrito
+ */
+const deleteAllProductsOnShoppingCart = async () => {
+    const db = await SQLite.openDatabaseAsync('store.db');
+
+    await db.runAsync('DELETE FROM carrito');
+
+}
+
 /**
  * Función para buscar un registro del carrito por su ID
  * @param {number} carritoId ID del carrito a buscar: number
@@ -107,6 +118,7 @@ const validateProductOnShoppingCart = async (id_producto) => {
 
 export {
     addProductToShoppingCart,
+    deleteAllProductsOnShoppingCart,
     editShoppingCartById,
     getShoppingCartById,
     getShoppingCart,
