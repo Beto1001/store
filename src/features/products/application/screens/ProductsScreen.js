@@ -42,9 +42,7 @@ export default function ProductsScreen({ navigation }) {
     }, [products]);
 
     useEffect(() => {
-        focusListener = navigation.addListener('focus', () => {
-            getProductsWithUseCallback();
-        });
+        getAllProducts();
 
     }, []);
 
@@ -65,7 +63,7 @@ export default function ProductsScreen({ navigation }) {
                 <ScrollView style={styles.scrollView}>
 
                     <ScrollView horizontal={false} >
-                        <Suspense fallback={<Loading/>}>
+                        <Suspense fallback={<Loading />}>
                             {products.map((product) => (
                                 <ProductCard
                                     key={product.id}
