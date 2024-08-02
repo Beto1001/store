@@ -18,18 +18,22 @@ export async function initializeDatabase(db) {
             cantidad INTEGER NOT NULL,
             FOREIGN KEY (id_producto) REFERENCES products(id)
         );
-        CREATE TABLE IF NOT EXISTS compras (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_producto INTEGER NOT NULL,
-            cantidad INTEGER NOT NULL,
-            precio_individual REAL NOT NULL,
-            total REAL NOT NULL,
-            fecha TEXT NOT NULL,
-            FOREIGN KEY (id_producto) REFERENCES products(id)
-        );
+         
         CREATE TABLE IF NOT EXISTS categories (
             key INTEGER PRIMARY KEY AUTOINCREMENT,
-            value TEXT NOT NULL);
+            value TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS ventas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            saledate TEXT NOT NULL,
+            barcode TEXT NOT NULL,
+            name TEXT NOT NULL,
+            category TEXT NOT NULL,
+            price REAL NOT NULL,
+            quantity INTEGER NOT NULL,
+            payment REAL NOT NULL
+        );
         `);
         console.log("Database correct");
         
