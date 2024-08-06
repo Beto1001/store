@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Vibration, ScrollView, RefreshControl, SafeAreaView } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Vibration, ScrollView, RefreshControl, SafeAreaView, FlatList } from 'react-native'
 import React, { Suspense, useCallback, useEffect, useState } from 'react'
 import ProductCard from '../components/ProductCard';
 import { FontAwesome } from '@expo/vector-icons';
@@ -48,13 +48,7 @@ export default function ProductsScreen({ navigation }) {
     }, []);
 
     return (
-        <ScrollView
-            refreshControl={
-                <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                />
-            }>
+        <SafeAreaView style={styles.container}>
             <View style={styles.searchcontainer}>
 
                 <FindProductButton getProductsWithUseCallback={getProductsWithUseCallback} screen={screen} />
@@ -66,32 +60,33 @@ export default function ProductsScreen({ navigation }) {
 
                 </View>
             ) : (
-                <ScrollView style={styles.scrollView}>
-
-                    <ScrollView horizontal={false} >
-                        <Suspense fallback={<Loading />}>
-                            {products.map((product) => (
-                                <ProductCard
-                                    key={product.id}
-                                    product={product}
-                                    getProductsWithUseCallback={getProductsWithUseCallback}
-                                    screen={screen}
-                                />
-                            ))}
-                        </Suspense>
-                    </ScrollView >
-                </ScrollView>
+                <Suspense fallback={<Loading />}>
+                    <FlatList
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                            />
+                        }
+                        data={products}
+                        renderItem={(product) => <ProductCard
+                            key={product.item.id}
+                            product={product.item}
+                            getProductsWithUseCallback={getProductsWithUseCallback}
+                            screen={screen}
+                        />}
+                    />
+                </Suspense>
 
             )}
-        </ScrollView>
+        </SafeAreaView>
     );
 
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-
+    container:{
+      flex:1,
     },
     productsContainer: {
         width: 400,
@@ -103,7 +98,6 @@ const styles = StyleSheet.create({
     },
 
     scrollView: {
-        flex: 1,
         backgroundColor: '#D8F7FB',
     },
     searchcontainer: {

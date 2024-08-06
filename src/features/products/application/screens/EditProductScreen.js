@@ -1,13 +1,15 @@
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView } from 'react-native'
-import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, RefreshControl, SafeAreaView, FlatList } from 'react-native'
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { getProductsTest } from '../../datasource/productDataSource';
 import ProductCard from '../components/ProductCard';
 import FindProductButton from '../components/FindProductButton';
+import Loading from '../../../components/Loading';
 
 export default function EditProductScreen({ navigation }) {
 
     let focusListener = null;
     const [products, setProducts] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
 
     let screen = '';
     const test = navigation.getState().routeNames;
@@ -28,6 +30,15 @@ export default function EditProductScreen({ navigation }) {
     const changeScreen = () => {
         navigation.navigate('ProductScanner');
     }
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        console.log('16', refreshing);
+        getProductsWithUseCallback();
+        setTimeout(() => {
+            setRefreshing(false);
+            console.log('20', refreshing);
+        }, 2000);
+    }, []);
 
     const getProductsWithUseCallback = useCallback(() => {
         getAllProducts();
@@ -38,46 +49,43 @@ export default function EditProductScreen({ navigation }) {
         focusListener = navigation.addListener('focus', () => {
             getProductsWithUseCallback();
         });
-      
+
     }, []);
 
     return (
-        <ScrollView>
+        <SafeAreaView style={styles.containergeneral}> 
             <View style={styles.container}>
                 <View style={styles.searchcontainer}>
-                   
-                    {/* <TouchableOpacity style={styles.buttonRegister}>
-                        <Text style={styles.searchtext}>Buscar</Text>
-                    </TouchableOpacity> */}
-
-                    <FindProductButton getProductsWithUseCallback={getProductsWithUseCallback} screen={screen}/>
-
+                    <FindProductButton getProductsWithUseCallback={getProductsWithUseCallback} screen={screen} />
                 </View>
             </View>
-            <ScrollView>
-                {products.length === 0 ? (
-                    <View>
-                        <Text>No hay productos registrados</Text>
-                        <TouchableOpacity onPress={getProductsWithUseCallback}>
-                            <Text>Aun no hay productos registrados, ve a registrar</Text>
-                        </TouchableOpacity>
-                    </View>
-                ) : (
-                    <ScrollView>
-                        <ScrollView horizontal={false} >
-                            {products.map((product) => (
-                                <ProductCard
-                                    key={product.id}
-                                    product={product}
-                                    getProductsWithUseCallback={getProductsWithUseCallback}
-                                    screen={screen}
-                                />
-                            ))}
-                        </ScrollView >
-                    </ScrollView>
-                )}
-            </ScrollView>
-        </ScrollView>
+            {products.length === 0 ? (
+                <View>
+                    <Text>No hay productos registrados</Text>
+                    <TouchableOpacity onPress={getProductsWithUseCallback}>
+                        <Text>Aun no hay productos registrados, ve a registrar</Text>
+                    </TouchableOpacity>
+                </View>
+            ) : (
+                <Suspense fallback={<Loading />}>
+                    <FlatList
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                            />
+                        }
+                        data={products}
+                        renderItem={(product) => <ProductCard
+                            key={product.item.id}
+                            product={product.item}
+                            getProductsWithUseCallback={getProductsWithUseCallback}
+                            screen={screen}
+                        />}
+                    />
+                </Suspense>
+            )}
+        </SafeAreaView>
     )
 }
 
@@ -88,7 +96,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-   
     searchcontainer: {
         display: 'flex',
         justifyContent: 'center',
@@ -120,6 +127,10 @@ const styles = StyleSheet.create({
         height: 40,
         borderRadius: 10,
         width: 60,
+    },
+    containergeneral:{
+        flex:1,
+
     },
 
 })

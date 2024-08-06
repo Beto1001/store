@@ -13,6 +13,7 @@ import EditProductIcon from './EditProductIcon';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function ProductCard({ product, getProductsWithUseCallback, screen }) {
+    console.log('18',product);
     return (
         <View>
             {
@@ -81,13 +82,9 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: '#fff',
         padding: 10,
-        margin: 10,
+        margin: 6,
         borderRadius: 8,
         shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
         height: 200,
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
