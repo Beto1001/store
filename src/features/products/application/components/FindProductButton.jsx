@@ -1,48 +1,95 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native'
-import { CameraView, useCameraPermissions } from "expo-camera";
+import { CameraView } from "expo-camera";
 import { getProductByBarcode } from '../../datasource/productDataSource';
-
-export default function FindProductButton() {
+import EditProductIcon from './EditProductIcon';
+import { TextInput } from 'react-native';
+import ProductCard from './ProductCard';
+export default function FindProductButton({ getProductsWithUseCallback }) {
     //Camera propierties
-    const [permission, requestPermission] = useCameraPermissions();
     const [scanned, setScanned] = useState(false);
     const [showScanner, setShowScanner] = useState(false);
 
     //Modal
     const [modalVisible, setModalVisible] = useState(false);
+    const [productFind, setProductFind] = useState(false);
 
     //Product
     const [product, setProduct] = useState([]);
+    const [barcode, setBarcode] = useState('');
 
     const handleShowModal = () => {
 
         setModalVisible(true);
         setShowScanner(true);
     }
+    const findByBarcode = async () => {
+        if (barcode === '' && barcode.length < 13) {
+            alert('El codigo de barras de un producto es de 13 caracteres');
+            return;
+        }
+        if (isNaN(barcode)) {
+            alert('Introduce solo números por favor');
+            return;
+        }
 
-    const handleBarCodeScanned = ({ type, data }) => {
-        setScanned(true);
+        const productByBarcode = await getProductByBarcode(barcode);
+        console.log('====================================');
+        console.log(productByBarcode);
+        console.log('====================================');
+
+        if (productByBarcode === null) {
+            alert('El producto no se encuentra registrado o se leyó mal el codigo, vuelve a intentarlo');
+            return;
+        }
         setModalVisible(true);
-        setShowScanner(false);
-        getProductByBarcode(data)
-            .then((response) => {
-                setProduct(response);
 
-            })
-            .catch((error) => console.log(error))
+        setProduct(productByBarcode);
+        setProductFind(true);
+    }
+
+    const handleBarCodeScanned = async ({ type, data }) => {
+        setShowScanner(false);
+        setScanned(true);
+
+        const productByBarcode = await getProductByBarcode(data);
+        if (productByBarcode === null) {
+            alert('El producto no se encuentra registrado o se leyó mal el codigo, vuelve a intentarlo');
+            setModalVisible(false);
+            return;
+        }
+
+        setProduct(productByBarcode);
+        setProductFind(true);
     };
 
     const restartScan = () => {
         setScanned(false);
         setModalVisible(false);
+        setProductFind(false);
+
     };
-  
+
     return (
         <View>
-            <TouchableOpacity style={styles.container} onPress={handleShowModal}>
-                <Text style={styles.searchtext}>Escanear</Text>
-            </TouchableOpacity>
+            <View style={styles.buttonsContainer}>
+                <TextInput
+                    style={styles.input}
+                    onChangeText={setBarcode}
+                    value={barcode}
+                    maxLength={13}
+                    keyboardType="numeric"
+                    placeholder='Codigo de barras'
+                />
+                <TouchableOpacity style={styles.container} onPress={findByBarcode}>
+                    <Text style={styles.searchtext}>Buscar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.container} onPress={handleShowModal}>
+                    <Text style={styles.searchtext}>Escanear</Text>
+                </TouchableOpacity>
+
+            </View>
+
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -62,8 +109,14 @@ export default function FindProductButton() {
                                 </CameraView>
                             </View>
                         )}
+                        {productFind && (
+                            <ProductCard
+                                key={product.id}
+                                product={product}
+                                getProductsWithUseCallback={getProductsWithUseCallback}
+                            />)}
                         <TouchableOpacity onPress={restartScan}>
-                            <Text>Ocultar</Text>
+                            <Text>Volver a intentar</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -107,6 +160,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: 380,
         height: 380,
-    }
+    },
+    buttonsContainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        gap: 10
+    },
+    input: {
+        borderColor: '#ccc',
+        borderWidth: 1,
+        padding: 10,
+        width: '50%',
+    },
 
 });

@@ -53,7 +53,7 @@ const addNewProduct = async (
             $image_url: image_url,
             $category: category
         });
-        return new Promise((resolve,reject)=>{
+        return new Promise((resolve, reject) => {
             resolve('Producto registrado');
         })
 
@@ -143,7 +143,11 @@ const getProductById = async (productId) => {
 const getProductByBarcode = async (barcode) => {
     const db = await SQLite.openDatabaseAsync('store.db');
 
-    const product = await db.getAllAsync('SELECT * FROM products WHERE barcode = $barcode', { $barcode: barcode });
+    const statement = await db.prepareAsync('SELECT * FROM products WHERE barcode = $barcode');
+
+    const result = await statement.executeAsync({ $barcode: barcode });
+
+    const product = result.getFirstAsync();
 
     return new Promise((resolve, reject) => {
         resolve(product);

@@ -1,6 +1,4 @@
 import * as SQLite from 'expo-sqlite'
-import { editProductInShoppingCart, getProductById } from '../../products/datasource/productDataSource';
-
 
 /**
  * Función para agregar un producto al carrito

@@ -30,11 +30,6 @@ export default function CloseSale({ shoppingCart, totalPay, getShoppingCartUseCa
         );
     }
 
-    const exampleDate = () => {
-
-
-    }
-
     const exampleTestAsync = async () => {
 
         let payment = 0;

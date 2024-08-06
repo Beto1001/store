@@ -45,15 +45,12 @@ export default function EditProductScreen({ navigation }) {
         <ScrollView>
             <View style={styles.container}>
                 <View style={styles.searchcontainer}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder='Codigo de barras del producto'
-                    />
+                   
                     {/* <TouchableOpacity style={styles.buttonRegister}>
                         <Text style={styles.searchtext}>Buscar</Text>
                     </TouchableOpacity> */}
 
-                    <FindProductButton />
+                    <FindProductButton getProductsWithUseCallback={getProductsWithUseCallback}/>
 
                 </View>
             </View>
@@ -91,13 +88,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    input: {
-        borderColor: '#ccc',
-        borderWidth: 1,
-        padding: 10,
-        marginBottom: 10,
-        width: '60%',
-    },
+   
     searchcontainer: {
         display: 'flex',
         justifyContent: 'center',

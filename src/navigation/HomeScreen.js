@@ -46,11 +46,11 @@ export default function HomeScreen() {
 
                                     <FontAwesome5 name="edit" size={size} color={color} />
 
-                            case 'SalesScreen':
+                            case 'Options':
 
-                                iconName = focused ? 'shopping' : 'shopping-outline';
+                                iconName = focused ? 'options' : 'options-outline';
 
-                                return <MaterialCommunityIcons name={iconName} size={size} color={color} />
+                                return <Ionicons name={iconName} size={size} color={color} />;
 
                             default:
                                 break;
@@ -64,7 +64,7 @@ export default function HomeScreen() {
                 <Tab.Screen name="ProductScanner" component={RegisterProductScreen} />
                 <Tab.Screen name="EditScreen" component={EditProductScreen} />
                 <Tab.Screen name="ShoppingCart" component={ShoppingCartScreen} />
-                <Tab.Screen name="SalesScreen" component={SalesScreen} />
+                <Tab.Screen name="Options" component={SalesScreen} />
 
             </Tab.Navigator>
         </NavigationContainer>

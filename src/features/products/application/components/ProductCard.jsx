@@ -7,7 +7,6 @@ import {
     Image,
     Vibration
 } from 'react-native';
-import { Skeleton } from 'react-native-skeletons';
 import ShoppingCart from '../../../shoppingcart/application/components/ShoppingCart';
 import DeleteProduct from './DeleteProduct';
 import EditProductIcon from './EditProductIcon';

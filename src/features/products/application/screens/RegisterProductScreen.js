@@ -37,9 +37,6 @@ export default function RegisterProductScreen() {
     //Categories
     const [category, setCategory] = useState([]);
 
-    //ButtonDisabled
-    const [disabled, setDisabled] = useState(true);
-
     if (!permission) {
         // Camera permissions are still loading.
         return <View />;
@@ -51,7 +48,6 @@ export default function RegisterProductScreen() {
             <View style={styles.container}>
                 <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
                 <Button onPress={requestPermission} title="grant permission" />
-                <Text>ksdjl</Text>
             </View>
         );
     }
@@ -82,29 +78,7 @@ export default function RegisterProductScreen() {
         setCategory(allCategories);
     }
 
-    const validateForm = () => {
-        try {
-
-            console.log('88', productDescription);
-            console.log('89', quantity);
-            console.log('90', productPrice);
-            console.log('91', productName);
-            console.log('92', productImage);
-            console.log('93', productCategory);
-            if (productName != '' && productDescription != '' && quantity > 0 && quantity.includes('.') && productPrice > 0 && productImage != null && productCategory != '') {
-                return true;
-
-            } else {
-                return false;
-            }
-
-        } catch (error) {
-            console.log('No se han podido validar los campos correctamente', error);
-            return false;
-
-        }
-
-    }
+   
     const handleAddProduct = async () => {
         try {
             if (productName != '' && productDescription != '' && quantity > 0 && quantity.includes('.') && productPrice > 0 && productImage != null && productCategory != '') {
@@ -112,7 +86,8 @@ export default function RegisterProductScreen() {
                 return;
             }
 
-            const imagePath = productImage ? await saveImageToDirectory(productImage[0].uri) : null;
+            const imagePath = await saveImageToDirectory(productImage[0].uri);
+
             const message = await addNewProduct(
                 productName,
                 productCode,
@@ -130,8 +105,6 @@ export default function RegisterProductScreen() {
             setProductCategory('');
             setProductImage(null);
             setModalVisible(false);
-
-
 
         } catch (error) {
             console.log(error);
@@ -177,7 +150,7 @@ export default function RegisterProductScreen() {
                 >
                 </CameraView>
             )}
-            <View style={styles.buttonsContainer}>
+            <View style={[styles.containercenter, styles.buttonsContainer]}>
                 {showScanner ? null : (
                     <TouchableOpacity onPress={restartScan} style={styles.cancelButton}>
                         <Text style={{ color: '#fff', textAlign: 'center' }}>Escanear</Text>
@@ -191,10 +164,10 @@ export default function RegisterProductScreen() {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <View style={styles.titleContainer}>
+                        <View style={styles.containercenter}>
                             <Text style={styles.modalTitle}>Registrar producto</Text>
                         </View>
-                        <View style={styles.codeContainer}>
+                        <View style={[ styles.containercenter, styles.codeContainer ]}>
                             <MaterialCommunityIcons
                                 name="barcode"
                                 size={40}
@@ -242,21 +215,21 @@ export default function RegisterProductScreen() {
                             placeholder="Seleccionar categoría"
                         />
 
-                        <TouchableOpacity style={styles.buttonTakePhotoContainer} onPress={handleTakePhoto}>
+                        <TouchableOpacity style={[ styles.containercenter, styles.buttonTakePhotoContainer ]} onPress={handleTakePhoto}>
                             <Text style={styles.buttonText}>Tomar foto</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.buttonImageContainer} onPress={handleSelectImage}>
+                        <TouchableOpacity style={[ styles.containercenter, styles.buttonImageContainer ]} onPress={handleSelectImage}>
                             <Text style={styles.buttonText}>Seleccionar Imagen</Text>
                         </TouchableOpacity>
                         {productImage &&
-                            <View style={styles.imageContainer}>
+                            <View style={styles.containercenter}>
                                 <Image source={{ uri: productImage[0].uri }} style={styles.selectedImage} />
                             </View>}
-                        <View style={styles.buttonsContainer}>
-                            <TouchableOpacity style={styles.cancelButton} onPress={handleOcult}>
+                        <View style={[styles.containercenter, styles.buttonsContainer]}>
+                            <TouchableOpacity style={[ styles.containercenter, styles.cancelButton ]} onPress={handleOcult}>
                                 <Text style={styles.buttonsTextGeneric}>Cancelar</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.buttonRegister} onPress={handleAddProduct}>
+                            <TouchableOpacity style={[ styles.containercenter, styles.buttonRegister ]} onPress={handleAddProduct}>
                                 <Text style={styles.buttonsTextGeneric}>Guardar</Text>
                             </TouchableOpacity>
                         </View>
@@ -274,6 +247,11 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "column",
         justifyContent: "center",
+    },
+    containercenter: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     modalContainer: {
         flex: 1,
@@ -300,9 +278,6 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     buttonsContainer: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         flexDirection: 'row',
         gap: 30,
         marginTop: 10,
@@ -312,29 +287,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#F55C5C',
         width: '45%',
         height: 40,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
         borderRadius: 10,
     },
     buttonRegister: {
         backgroundColor: '#0C0D0C',
         width: '45%',
         height: 40,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
         borderRadius: 10,
     },
-    titleContainer: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
     codeContainer: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
         flexDirection: 'row',
         gap: 4
     },
@@ -354,9 +315,6 @@ const styles = StyleSheet.create({
     },
     buttonImageContainer: {
         backgroundColor: '#2BC4ED',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
         height: 50,
         borderRadius: 15,
         marginTop: 8
@@ -364,9 +322,6 @@ const styles = StyleSheet.create({
     buttonTakePhotoContainer: {
         marginTop: 10,
         backgroundColor: '#B1B1B1',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
         height: 50,
         borderRadius: 15
     },
@@ -385,14 +340,8 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 10,
     },
-    imageContainer: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
     textlabel: {
         fontSize: 14,
         fontWeight: 'bold',
-
     }
 });
