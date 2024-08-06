@@ -5,6 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { getProductsTest } from '../../datasource/productDataSource';
 import { Skeleton } from 'react-native-skeletons';
 import Loading from '../../../components/Loading';
+import FindProductButton from '../components/FindProductButton';
 export default function ProductsScreen({ navigation }) {
 
     let screen = '';
@@ -54,6 +55,11 @@ export default function ProductsScreen({ navigation }) {
                     onRefresh={onRefresh}
                 />
             }>
+            <View style={styles.searchcontainer}>
+
+                <FindProductButton getProductsWithUseCallback={getProductsWithUseCallback} screen={screen} />
+
+            </View>
             {products.length === 0 ? (
                 <View>
                     <Text>No hay productos registrados</Text>
@@ -99,5 +105,12 @@ const styles = StyleSheet.create({
     scrollView: {
         flex: 1,
         backgroundColor: '#D8F7FB',
+    },
+    searchcontainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        gap: 10,
     },
 });

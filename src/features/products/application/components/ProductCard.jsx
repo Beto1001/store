@@ -12,7 +12,7 @@ import DeleteProduct from './DeleteProduct';
 import EditProductIcon from './EditProductIcon';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-export default function ProductCard ({ product, getProductsWithUseCallback, screen }) {
+export default function ProductCard({ product, getProductsWithUseCallback, screen }) {
     return (
         <View>
             {
@@ -30,9 +30,13 @@ export default function ProductCard ({ product, getProductsWithUseCallback, scre
                                 <Text style={styles.price}>$ {product.price}</Text>
                                 <Text style={styles.price}>Existentes: {product.quantity}</Text>
                             </View>
-                            <ShoppingCart 
-                                product={product} 
-                                getProductsWithUseCallback={getProductsWithUseCallback} />
+                            <View style={styles.optionscontainer}>
+                                <ShoppingCart
+                                    product={product}
+                                    getProductsWithUseCallback={getProductsWithUseCallback} />
+
+                            </View>
+
                         </View>
                     </TouchableOpacity >
                 ) : (
@@ -56,13 +60,13 @@ export default function ProductCard ({ product, getProductsWithUseCallback, scre
                                 <Text style={styles.price}>Existentes: {product.quantity}</Text>
                             </View>
                             <View style={styles.optionscontainer}>
-                                <DeleteProduct 
-                                    product={product} 
-                                    getProductsWithUseCallback={getProductsWithUseCallback} 
+                                <DeleteProduct
+                                    product={product}
+                                    getProductsWithUseCallback={getProductsWithUseCallback}
                                 />
-                                <EditProductIcon 
-                                    product={product} 
-                                    getProductsWithUseCallback={getProductsWithUseCallback} 
+                                <EditProductIcon
+                                    product={product}
+                                    getProductsWithUseCallback={getProductsWithUseCallback}
                                 />
                             </View>
                         </View>
@@ -134,7 +138,7 @@ const styles = StyleSheet.create({
         flexDirection: 'colum',
         gap: 10,
     },
-    cardEdit:{
+    cardEdit: {
         backgroundColor: '#fff',
         padding: 10,
         margin: 10,
@@ -160,14 +164,14 @@ const styles = StyleSheet.create({
     nameEdit: {
         fontSize: 16,
         fontWeight: 'bold',
-        color:"#09165A",
+        color: "#09165A",
     },
-    barcodeContainerEdit:{
-        display:'flex',
-        justifyContent:'center',
-        alignItems:'center',
-        flexDirection:'row',
-        gap:5,
-        marginRight:20
+    barcodeContainerEdit: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        gap: 5,
+        marginRight: 20
     },
 });

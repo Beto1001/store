@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
         height: 60,
     },
     button: {
-        width: 150,
+        width: 140,
         height: 30,
         backgroundColor: '#00CD06',
         display: 'flex',

@@ -78,7 +78,7 @@ export default function RegisterProductScreen() {
         setCategory(allCategories);
     }
 
-   
+
     const handleAddProduct = async () => {
         try {
             if (productName != '' && productDescription != '' && quantity > 0 && quantity.includes('.') && productPrice > 0 && productImage != null && productCategory != '') {
@@ -116,15 +116,20 @@ export default function RegisterProductScreen() {
         setShowScanner(false);
 
         const productExistInStock = await getProductByBarcode(data);
+        console.log('====================================');
+        console.log(productExistInStock);
+        console.log('====================================');
 
-        if (productExistInStock.length != 0) {
-
+        if (productExistInStock === null) {
+            setProductCode(data);
+            setModalVisible(true);
+        }
+        else {
             alert('Ese producto ya se encuentra registrado');
             return;
+
         }
 
-        setProductCode(data);
-        setModalVisible(true);
     };
 
     const restartScan = () => {
@@ -167,7 +172,7 @@ export default function RegisterProductScreen() {
                         <View style={styles.containercenter}>
                             <Text style={styles.modalTitle}>Registrar producto</Text>
                         </View>
-                        <View style={[ styles.containercenter, styles.codeContainer ]}>
+                        <View style={[styles.containercenter, styles.codeContainer]}>
                             <MaterialCommunityIcons
                                 name="barcode"
                                 size={40}
@@ -215,10 +220,10 @@ export default function RegisterProductScreen() {
                             placeholder="Seleccionar categoría"
                         />
 
-                        <TouchableOpacity style={[ styles.containercenter, styles.buttonTakePhotoContainer ]} onPress={handleTakePhoto}>
+                        <TouchableOpacity style={[styles.containercenter, styles.buttonTakePhotoContainer]} onPress={handleTakePhoto}>
                             <Text style={styles.buttonText}>Tomar foto</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[ styles.containercenter, styles.buttonImageContainer ]} onPress={handleSelectImage}>
+                        <TouchableOpacity style={[styles.containercenter, styles.buttonImageContainer]} onPress={handleSelectImage}>
                             <Text style={styles.buttonText}>Seleccionar Imagen</Text>
                         </TouchableOpacity>
                         {productImage &&
@@ -226,10 +231,10 @@ export default function RegisterProductScreen() {
                                 <Image source={{ uri: productImage[0].uri }} style={styles.selectedImage} />
                             </View>}
                         <View style={[styles.containercenter, styles.buttonsContainer]}>
-                            <TouchableOpacity style={[ styles.containercenter, styles.cancelButton ]} onPress={handleOcult}>
+                            <TouchableOpacity style={[styles.containercenter, styles.cancelButton]} onPress={handleOcult}>
                                 <Text style={styles.buttonsTextGeneric}>Cancelar</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[ styles.containercenter, styles.buttonRegister ]} onPress={handleAddProduct}>
+                            <TouchableOpacity style={[styles.containercenter, styles.buttonRegister]} onPress={handleAddProduct}>
                                 <Text style={styles.buttonsTextGeneric}>Guardar</Text>
                             </TouchableOpacity>
                         </View>

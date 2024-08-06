@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React, { Suspense, useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native'
 import { CameraView } from "expo-camera";
 import { getProductByBarcode } from '../../datasource/productDataSource';
 import EditProductIcon from './EditProductIcon';
 import { TextInput } from 'react-native';
 import ProductCard from './ProductCard';
-export default function FindProductButton({ getProductsWithUseCallback }) {
+import Loading from '../../../components/Loading';
+export default function FindProductButton({ getProductsWithUseCallback, screen }) {
     //Camera propierties
     const [scanned, setScanned] = useState(false);
     const [showScanner, setShowScanner] = useState(false);
@@ -56,6 +57,7 @@ export default function FindProductButton({ getProductsWithUseCallback }) {
         if (productByBarcode === null) {
             alert('El producto no se encuentra registrado o se leyó mal el codigo, vuelve a intentarlo');
             setModalVisible(false);
+            setScanned(false);
             return;
         }
 
@@ -110,11 +112,16 @@ export default function FindProductButton({ getProductsWithUseCallback }) {
                             </View>
                         )}
                         {productFind && (
-                            <ProductCard
-                                key={product.id}
-                                product={product}
-                                getProductsWithUseCallback={getProductsWithUseCallback}
-                            />)}
+                            <Suspense fallback={<Loading />}>
+                                <ProductCard
+                                    key={product.id}
+                                    product={product}
+                                    getProductsWithUseCallback={getProductsWithUseCallback}
+                                    screen={screen}
+                                />
+                            </Suspense>
+
+                        )}
                         <TouchableOpacity onPress={restartScan}>
                             <Text>Volver a intentar</Text>
                         </TouchableOpacity>

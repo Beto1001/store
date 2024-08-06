@@ -50,7 +50,7 @@ export default function EditProductScreen({ navigation }) {
                         <Text style={styles.searchtext}>Buscar</Text>
                     </TouchableOpacity> */}
 
-                    <FindProductButton getProductsWithUseCallback={getProductsWithUseCallback}/>
+                    <FindProductButton getProductsWithUseCallback={getProductsWithUseCallback} screen={screen}/>
 
                 </View>
             </View>
